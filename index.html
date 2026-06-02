@@ -415,6 +415,7 @@ const GH_REPO   = 'DRQ6305/banzu';
 const GH_FILE   = 'data.json';
 const GH_BRANCH = 'main';
 const TOKEN_KEY = 'banzu_gh_token';
+const FS_PROXY  = 'https://feishu-proxy.2420115917.workers.dev/feishu';
 const _TA='ghp_fwKtqJUOKN2uGTubt';
 const _TB='H9I0y6X055Kjr3GY3MY';
 const _TK=_TA+_TB;
@@ -783,7 +784,7 @@ let nokChartTrend=null, nokChartLine=null;
 
 async function getNokFsToken(){
   if(nokFsToken && Date.now()<nokFsExpire) return nokFsToken;
-  const r=await fetch('https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal',{
+  const r=await fetch(FS_PROXY+'/open-apis/auth/v3/tenant_access_token/internal',{
     method:'POST',headers:{'Content-Type':'application/json'},
     body:JSON.stringify({app_id:FS_APP_ID2,app_secret:FS_APP_SEC2})
   });
@@ -795,8 +796,6 @@ async function getNokFsToken(){
 }
 
 async function loadNOK(){
-  if(document.getElementById('panel-nok').style.display==='none'&&
-     !document.getElementById('panel-nok').classList.contains('active')) return;
   const btn=document.querySelector('.nok-refresh-btn');
   if(btn) btn.textContent='⏳ 加载中…';
   try{
@@ -807,7 +806,7 @@ async function loadNOK(){
     while(hasMore){
       const params=new URLSearchParams({page_size:'100'});
       if(pageToken) params.set('page_token',pageToken);
-      const r=await fetch(`https://open.feishu.cn/open-apis/bitable/v1/apps/${FS_NOK_APP}/tables/${FS_NOK_TABLE}/records?${params}`,{
+      const r=await fetch(`${FS_PROXY}/open-apis/bitable/v1/apps/${FS_NOK_APP}/tables/${FS_NOK_TABLE}/records?${params}`,{
         headers:{'Authorization':'Bearer '+token}
       });
       const d=await r.json();
@@ -829,8 +828,14 @@ async function loadNOK(){
         repair:repairMap[String(f['返修状态'])]||String(f['返修状态']||'未返修')
       };
     });
-    // 更新线体下拉
+    // 构建 nokAllData 供图表使用
     const lines=[...new Set(nokData.map(r=>r.line).filter(Boolean))].sort();
+    const last7=[...Array(7)].map((_,i)=>{const d=new Date();d.setDate(d.getDate()-6+i);return d.toISOString().slice(0,10);});
+    const daily=last7.map(d=>nokData.filter(r=>r.date===d).length);
+    const lineDaily={};
+    lines.forEach(l=>{lineDaily[l]=last7.map(d=>nokData.filter(r=>r.date===d&&r.line===l).length);});
+    nokAllData={last7,daily,lines,lineDaily};
+    // 更新线体下拉
     const sel=document.getElementById('nokLineFilter');
     sel.innerHTML='<option value="">全部线体</option>'+lines.map(l=>`<option value="${l}">${l}</option>`).join('');
     document.getElementById('nokUpdateTime').textContent='更新于 '+new Date().toLocaleTimeString('zh-CN');
