@@ -561,8 +561,8 @@
           "linkText": "冲压样件维护点检表",
           "linkUrl": "https://li.feishu.cn/sheets/Q8sSs01GLhmBamt9yHGcbv1Unvb",
           "days": [
-            3,
-            0,
+            1,
+            1,
             0,
             0,
             0,
@@ -601,7 +601,7 @@
           "linkUrl": "https://factory-ams-app-web.prod.k8s.chehejia.com/home/tab1",
           "days": [
             1,
-            0,
+            3,
             0,
             0,
             0,
@@ -640,7 +640,7 @@
           "linkUrl": "https://hold.lixiang.com/newHome?lang=zh-CN&open_in_browser=true&v=24",
           "days": [
             3,
-            0,
+            3,
             0,
             0,
             0,
@@ -718,7 +718,7 @@
           "linkUrl": "https://li.feishu.cn/wiki/IwbFwoCXyiDetCklTmqcRDR8nAY?sheet=88uZ9x",
           "days": [
             3,
-            0,
+            3,
             0,
             0,
             0,
@@ -1303,7 +1303,7 @@
           "linkUrl": "https://lixiang.feishuapp.cn/ae/apps/v3/package_a975e2__c/pc/aadib4pdwlgkw",
           "days": [
             3,
-            0,
+            1,
             0,
             0,
             0,
@@ -1342,7 +1342,7 @@
           "linkUrl": "",
           "days": [
             3,
-            0,
+            1,
             0,
             0,
             0,
@@ -1420,7 +1420,7 @@
           "linkUrl": "https://lixiang.feishuapp.cn/ae/apps/v3/package_883834__c/pc/aadjwj4rrxyqw",
           "days": [
             3,
-            0,
+            3,
             0,
             0,
             0,
