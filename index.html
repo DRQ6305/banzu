@@ -225,6 +225,33 @@ body{font-family:'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;backgroun
 ::-webkit-scrollbar-thumb{background:var(--bg5);border-radius:3px;}
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
 .panel.active{animation:fadeIn .2s ease;}
+
+/* MODE SWITCHER */
+.mode-switcher{display:flex;gap:4px;padding:10px 8px 8px;border-bottom:1px solid var(--border);margin-bottom:4px;}
+.mode-btn{flex:1;padding:7px 4px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);transition:all .15s;text-align:center;}
+.mode-btn:hover{background:var(--bg4);}
+.mode-btn.active{background:var(--primary);color:#fff;border-color:var(--primary);}
+body.nok-mode .kpi-bar,body.nok-mode .global-filter-bar{display:none!important;}
+body.nok-mode .layout{height:calc(100vh - 60px);}
+body.nok-mode .header-nav{display:none;}
+body.nok-mode .month-switcher,body.nok-mode .save-btn{display:none;}
+
+/* NOK PANEL */
+.nok-info-bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;align-items:stretch;}
+.nok-stat-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:10px 16px;min-width:110px;}
+.nok-stat-num{font-size:22px;font-weight:800;color:var(--red);}
+.nok-stat-label{font-size:11px;color:var(--text3);margin-top:2px;}
+.nok-meta-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:10px 16px;flex:1;display:flex;align-items:center;gap:10px;min-width:200px;}
+.nok-table-wrap{background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow:var(--shadow-sm);}
+.nok-table{width:100%;border-collapse:collapse;font-size:13px;}
+.nok-table thead tr{background:#f8fafc;}
+.nok-table th{padding:10px 12px;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid var(--border);white-space:nowrap;text-align:left;}
+.nok-table td{padding:8px 12px;border-bottom:1px solid var(--border);vertical-align:middle;}
+.nok-table tr:hover td{background:var(--bg3);}
+.nok-table tr:last-child td{border-bottom:none;}
+.repair-tag{display:inline-block;background:#dcfce7;color:#15803d;border-radius:4px;padding:2px 7px;font-size:11px;font-weight:600;white-space:nowrap;}
+.line-tag{display:inline-block;background:#dbeafe;color:#1d4ed8;border-radius:4px;padding:2px 7px;font-size:11px;font-weight:600;}
+.nok-hint{text-align:center;padding:40px;color:var(--text3);font-size:14px;}
 </style>
 </head>
 <body>
@@ -311,8 +338,18 @@ body{font-family:'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;backgroun
 <!-- LAYOUT -->
 <div class="layout">
   <div class="sidebar">
-    <div class="sidebar-section">任务分类</div>
-    <div id="sidebarList"></div>
+    <div class="mode-switcher">
+      <button class="mode-btn active" onclick="switchMode('tasks',this)">📋 日常任务</button>
+      <button class="mode-btn" onclick="switchMode('nok',this)">🔩 拧紧NOK</button>
+    </div>
+    <div id="sidebar-tasks">
+      <div class="sidebar-section">任务分类</div>
+      <div id="sidebarList"></div>
+    </div>
+    <div id="sidebar-nok" style="display:none">
+      <div class="sidebar-section">线体筛选</div>
+      <div id="nokSidebarList"></div>
+    </div>
   </div>
   <div class="main" id="mainScroll">
 
@@ -342,6 +379,25 @@ body{font-family:'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;backgroun
       </div>
       <div class="stats-grid full">
         <div class="chart-card"><div class="chart-card-title">各类别任务数</div><div id="chartBar" style="height:200px"></div></div>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-nok">
+      <div class="nok-info-bar">
+        <div class="nok-stat-card">
+          <div class="nok-stat-num" id="nokTotal">—</div>
+          <div class="nok-stat-label">NOK 条数</div>
+        </div>
+        <div class="nok-meta-card">
+          <span style="font-size:12px;color:var(--text3)">数据范围：</span>
+          <span id="nokSince" style="font-size:12px;color:var(--text2)">—</span>
+          <span style="font-size:12px;color:var(--text3);margin-left:8px">更新时间：</span>
+          <span id="nokUpdated" style="font-size:12px;color:var(--text2)">—</span>
+          <button onclick="refreshNokData()" style="margin-left:auto;padding:5px 14px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);font-size:12px;cursor:pointer;font-weight:600;">🔄 刷新</button>
+        </div>
+      </div>
+      <div class="nok-table-wrap">
+        <div id="nokTableContainer"><div class="nok-hint">加载中…</div></div>
       </div>
     </div>
   </div>
@@ -773,6 +829,97 @@ function updateClock(){
 }
 updateClock();
 setInterval(updateClock,1000);
+
+// ── NOK MODE ──
+let appMode='tasks', nokData=null, nokLineFilter='';
+
+function switchMode(mode, btn){
+  appMode = mode;
+  document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const isNok = mode==='nok';
+  document.body.classList.toggle('nok-mode', isNok);
+  document.getElementById('sidebar-tasks').style.display = isNok ? 'none' : '';
+  document.getElementById('sidebar-nok').style.display  = isNok ? '' : 'none';
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  if(isNok){
+    document.getElementById('panel-nok').classList.add('active');
+    loadNokData();
+  } else {
+    document.getElementById('panel-calendar').classList.add('active');
+    document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelector('.nav-btn').classList.add('active');
+  }
+}
+
+async function loadNokData(){
+  if(nokData){ renderNokTable(); return; }
+  document.getElementById('nokTableContainer').innerHTML='<div class="nok-hint">正在从 GitHub 加载数据…</div>';
+  try{
+    const res = await fetch(`https://raw.githubusercontent.com/${GH_REPO}/main/nok_data.json?t=${Date.now()}`);
+    if(!res.ok) throw new Error('HTTP '+res.status+' — 请先运行 fetch_nok.mjs 生成数据');
+    nokData = await res.json();
+    const upStr  = nokData.updated  ? new Date(nokData.updated).toLocaleString('zh-CN') : '—';
+    const sinStr = nokData.since    ? nokData.since + ' 至今' : '—';
+    document.getElementById('nokUpdated').textContent = upStr;
+    document.getElementById('nokSince').textContent   = sinStr;
+    renderNokSidebar();
+    renderNokTable();
+  }catch(e){
+    document.getElementById('nokTableContainer').innerHTML=`<div class="nok-hint">⚠️ ${e.message}</div>`;
+  }
+}
+
+function refreshNokData(){
+  nokData = null;
+  loadNokData();
+}
+
+function renderNokSidebar(){
+  const counts={};
+  (nokData.records||[]).forEach(r=>{ counts[r.l]=(counts[r.l]||0)+1; });
+  const lines = Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+  let html=`<div class="sidebar-item ${nokLineFilter===''?'active':''}" onclick="setNokLine('',this)"><div class="sidebar-dot" style="background:#2563eb"></div>全部线体<span class="sidebar-count">${nokData.total}</span></div>`;
+  lines.forEach(([l,cnt])=>{
+    html+=`<div class="sidebar-item ${nokLineFilter===l?'active':''}" onclick="setNokLine('${l}',this)"><div class="sidebar-dot" style="background:#dc2626"></div>${l}<span class="sidebar-count">${cnt}</span></div>`;
+  });
+  document.getElementById('nokSidebarList').innerHTML=html;
+}
+
+function setNokLine(line, el){
+  nokLineFilter = line;
+  document.querySelectorAll('#nokSidebarList .sidebar-item').forEach(i=>i.classList.remove('active'));
+  el.classList.add('active');
+  renderNokTable();
+}
+
+function renderNokTable(){
+  if(!nokData) return;
+  const records = (nokData.records||[]).filter(r=>!nokLineFilter||r.l===nokLineFilter);
+  document.getElementById('nokTotal').textContent = records.length;
+  if(!records.length){
+    document.getElementById('nokTableContainer').innerHTML='<div class="nok-hint">该线体暂无 NOK 数据</div>';
+    return;
+  }
+  let html=`<table class="nok-table"><thead><tr>
+    <th>日期</th><th>时间</th><th>线体</th><th>工位</th><th>螺栓号</th>
+    <th>扭矩(N·m)</th><th>角度(°)</th><th>返修状态</th>
+  </tr></thead><tbody>`;
+  records.forEach(r=>{
+    html+=`<tr>
+      <td style="white-space:nowrap">${r.d}</td>
+      <td style="white-space:nowrap;font-variant-numeric:tabular-nums">${r.t}</td>
+      <td><span class="line-tag">${r.l}</span></td>
+      <td style="font-size:12px;color:var(--text2)">${r.s}</td>
+      <td style="font-size:12px">${r.b}</td>
+      <td style="text-align:right;font-weight:600">${r.tq??'—'}</td>
+      <td style="text-align:right">${r.an??'—'}</td>
+      <td><span class="repair-tag">${r.r||'—'}</span></td>
+    </tr>`;
+  });
+  html+='</tbody></table>';
+  document.getElementById('nokTableContainer').innerHTML=html;
+}
 
 // ── INIT ──
 (function(){
