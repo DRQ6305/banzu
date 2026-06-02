@@ -242,6 +242,8 @@ body{font-family:'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;backgroun
 .panel.active{animation:fadeIn .2s ease;}
 #panel-calendar{padding:16px 0 48px;}
 #panel-calendar .date-filter-bar{margin:0 20px 16px;}
+.add-task-btn{margin-left:8px;padding:5px 14px;border-radius:8px;border:1px solid var(--primary-border);background:var(--primary-bg);color:var(--primary);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;}
+.add-task-btn:hover{background:var(--primary);color:#fff;box-shadow:0 2px 8px rgba(37,99,235,.3);}
 
 </style>
 </head>
@@ -255,6 +257,46 @@ body{font-family:'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;backgroun
     <input class="modal-input" id="tokenInput" type="password" placeholder="粘贴你的 GitHub Token" autocomplete="off">
     <button class="modal-btn" onclick="confirmToken()">确认并加载数据</button>
     <div class="modal-hint">Token 保存在浏览器 localStorage，换设备需重新输入</div>
+  </div>
+</div>
+
+<!-- ADD TASK MODAL -->
+<div class="modal-mask" id="addTaskModal" style="display:none" onclick="if(event.target===this)closeAddTaskModal()">
+  <div class="modal-box" style="width:460px">
+    <div class="modal-title">新增任务</div>
+    <div class="modal-desc" style="margin-bottom:16px">填写任务信息，新任务将添加到当前月</div>
+    <label style="font-size:12px;font-weight:600;color:var(--text2);display:block;margin-bottom:4px">任务名称 <span style="color:var(--red)">*</span></label>
+    <input class="modal-input" id="atName" type="text" placeholder="请输入任务名称" maxlength="40">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+      <div>
+        <label style="font-size:12px;font-weight:600;color:var(--text2);display:block;margin-bottom:4px">分类 <span style="color:var(--red)">*</span></label>
+        <select class="modal-input" id="atCat" style="margin-bottom:0">
+          <option value="人">【人】类</option>
+          <option value="机">【机】类</option>
+          <option value="料">【料】类</option>
+          <option value="法">【法】类</option>
+          <option value="安全">【安全】类</option>
+          <option value="其他">【其他】类</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size:12px;font-weight:600;color:var(--text2);display:block;margin-bottom:4px">频次 <span style="color:var(--red)">*</span></label>
+        <select class="modal-input" id="atFreq" style="margin-bottom:0">
+          <option value="天">每天</option>
+          <option value="周">每周</option>
+          <option value="月">每月</option>
+          <option value="按需">按需</option>
+        </select>
+      </div>
+    </div>
+    <label style="font-size:12px;font-weight:600;color:var(--text2);display:block;margin-bottom:4px">链接地址（可选）</label>
+    <input class="modal-input" id="atLinkUrl" type="url" placeholder="https://...">
+    <label style="font-size:12px;font-weight:600;color:var(--text2);display:block;margin-bottom:4px">链接文字（可选）</label>
+    <input class="modal-input" id="atLinkText" type="text" placeholder="查看" maxlength="20">
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <button class="modal-btn" style="background:var(--bg3);color:var(--text2);border:1px solid var(--border2)" onclick="closeAddTaskModal()">取消</button>
+      <button class="modal-btn" onclick="submitAddTask()">确认添加</button>
+    </div>
   </div>
 </div>
 
@@ -343,6 +385,7 @@ body{font-family:'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;backgroun
           <div class="legend-item"><div class="legend-dot" style="background:var(--bg4)"></div>不涉及</div>
           <div class="legend-item"><div class="legend-dot" style="background:#fff;border:1px dashed var(--border2)"></div>未填写</div>
           <div class="legend-item"><div class="legend-dot" style="outline:2px solid var(--orange);outline-offset:1px;background:#fff"></div>今天</div>
+          <button class="add-task-btn" onclick="openAddTaskModal()">+ 添加任务</button>
         </div>
       </div>
       <div id="calendarView"></div>
@@ -736,6 +779,38 @@ function openDetailModal(r,label){
 function closeDetailModal(){
   document.getElementById('detailModal').style.display='none';
   document.body.style.overflow='';
+}
+
+// ── ADD TASK ──
+function openAddTaskModal(){
+  document.getElementById('atName').value='';
+  document.getElementById('atCat').value='人';
+  document.getElementById('atFreq').value='天';
+  document.getElementById('atLinkUrl').value='';
+  document.getElementById('atLinkText').value='';
+  document.getElementById('addTaskModal').style.display='flex';
+  document.body.style.overflow='hidden';
+  setTimeout(()=>document.getElementById('atName').focus(),50);
+}
+function closeAddTaskModal(){
+  document.getElementById('addTaskModal').style.display='none';
+  document.body.style.overflow='';
+}
+function submitAddTask(){
+  const name=document.getElementById('atName').value.trim();
+  if(!name){showToast('请输入任务名称','error');return;}
+  const cat=document.getElementById('atCat').value;
+  const freq=document.getElementById('atFreq').value;
+  const linkUrl=document.getElementById('atLinkUrl').value.trim();
+  const linkText=document.getElementById('atLinkText').value.trim();
+  const days=Array(MONTH_DAYS).fill(0);
+  TASKS.push({name,cat,freq,days,linkUrl,linkText});
+  setDirty(true);
+  renderSidebar();
+  renderCalendar();
+  updateKPI();
+  closeAddTaskModal();
+  showToast(`已添加任务：${name}`,'success');
 }
 
 
