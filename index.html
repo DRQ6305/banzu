@@ -493,13 +493,13 @@ function updateDcEl(el,s,day){
 function updateCatProgress(catKey){
   const tasks=TASKS.filter(t=>t.cat===catKey);
   const r=getEffectiveRange();
-  let done=0,total=0;
-  tasks.forEach(t=>{for(let i=r.from-1;i<r.to;i++){const s=t.days[i]??0;if(s===1||s===2){total++;if(s===1)done++;}}});
-  const pct=total>0?Math.round(done/total*100):100;
+  let done=0,na=0;
+  tasks.forEach(t=>{for(let i=r.from-1;i<r.to;i++){const s=t.days[i]??0;if(s===1)done++;else if(s===3)na++;}});
+  const pct=tasks.length>0?Math.round((done+na)/tasks.length*100):100;
   const sec=document.querySelector(`.cat-section[data-cat="${catKey}"]`);
   if(!sec)return;
   sec.querySelector('.cat-progress-fill').style.width=pct+'%';
-  sec.querySelector('.cat-pct').innerHTML=`${done}/${total}&nbsp;<strong style="color:${getCatColor(catKey)}">${pct}%</strong>`;
+  sec.querySelector('.cat-pct').innerHTML=`${done+na}/${tasks.length}&nbsp;<strong style="color:${getCatColor(catKey)}">${pct}%</strong>`;
 }
 
 // ── HELPERS ──
@@ -585,15 +585,15 @@ function renderCalendar(){
     const tasks=filtered.filter(t=>t.cat===catKey);
     if(!tasks.length)return;
     const color=getCatColor(catKey);
-    let done=0,total=0;
-    tasks.forEach(t=>{for(let i=r.from-1;i<r.to;i++){const s=t.days[i]??0;if(s===1||s===2){total++;if(s===1)done++;}}});
-    const pct=total>0?Math.round(done/total*100):100;
+    let done=0,na=0;
+    tasks.forEach(t=>{for(let i=r.from-1;i<r.to;i++){const s=t.days[i]??0;if(s===1)done++;else if(s===3)na++;}});
+    const pct=tasks.length>0?Math.round((done+na)/tasks.length*100):100;
     html+=`<div class="cat-section" data-cat="${catKey}">
       <div class="cat-header" style="border-left-color:${color}">
         <span class="cat-badge" style="background:${color}">${catKey}</span>
         <span class="cat-title">类任务 · ${tasks.length}项</span>
         <div class="cat-progress-wrap"><div class="cat-progress-fill" style="width:${pct}%;background:${color}"></div></div>
-        <span class="cat-pct">${done}/${total}&nbsp;<strong style="color:${color}">${pct}%</strong></span>
+        <span class="cat-pct">${done+na}/${tasks.length}&nbsp;<strong style="color:${color}">${pct}%</strong></span>
       </div>`;
     tasks.forEach(t=>{
       const ti=TASKS.indexOf(t);
