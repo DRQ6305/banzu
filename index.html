@@ -54,6 +54,10 @@ body{font-family:'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;backgroun
 .kpi-item:hover{background:var(--bg3);}
 .kpi-link{cursor:pointer;}
 .kpi-link:hover .kpi-num{text-decoration:underline;text-underline-offset:3px;}
+.global-filter-bar{display:flex;align-items:center;flex-wrap:wrap;gap:6px;padding:8px 20px;background:var(--bg2);border-bottom:1px solid var(--border);}
+.gf-btn{padding:4px 12px;border-radius:6px;border:1px solid var(--border2);background:#fff;color:var(--text2);font-size:13px;cursor:pointer;transition:all .15s;}
+.gf-btn:hover{background:var(--bg3);border-color:#94a3b8;}
+.gf-btn.active{background:var(--primary);color:#fff;border-color:var(--primary);font-weight:600;}
 .kpi-item:nth-child(1)::before{background:var(--green);}
 .kpi-item:nth-child(2)::before{background:var(--red);}
 .kpi-item:nth-child(3)::before{background:var(--orange);}
@@ -269,13 +273,30 @@ body{font-family:'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;backgroun
         <span class="date-chip" id="dateChip">📅 —</span>
         <button class="month-arrow" onclick="switchMonth(1)">&#8250;</button>
       </div>
-      <button class="today-btn" onclick="scrollToToday()">定位今天</button>
       <button class="save-btn" id="saveBtn" onclick="saveData()">
         <div class="dirty-dot"></div>
         <span id="saveBtnText">💾 保存</span>
       </button>
     </div>
   </div>
+</div>
+
+<!-- GLOBAL DATE FILTER -->
+<div class="global-filter-bar">
+  <span class="df-label">📅 日期范围：</span>
+  <button class="gf-btn" onclick="setGlobalFilter('all',this)">全月</button>
+  <button class="gf-btn active" onclick="setGlobalFilter('today',this)">今天</button>
+  <button class="gf-btn" onclick="setGlobalFilter('week',this)">本周</button>
+  <button class="gf-btn" onclick="setGlobalFilter('done',this)">已过日期</button>
+  <div class="df-divider"></div>
+  <div class="df-range">
+    <span class="df-label">自定义：</span>
+    <input class="df-day-input" id="gfFrom" type="number" min="1" max="30" placeholder="起">
+    <span class="df-range-sep">—</span>
+    <input class="df-day-input" id="gfTo" type="number" min="1" max="30" placeholder="止">
+    <button class="df-apply" onclick="applyGlobalRange()">应用</button>
+  </div>
+  <span id="gfRangeLabel" style="margin-left:8px;font-size:12px;color:var(--text3);"></span>
 </div>
 
 <!-- KPI BAR -->
@@ -297,20 +318,7 @@ body{font-family:'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;backgroun
   <div class="main" id="mainScroll">
 
     <div class="panel active" id="panel-calendar">
-      <div class="date-filter-bar">
-        <span class="df-label">📅 日期范围：</span>
-        <button class="df-btn" onclick="setDateFilter('all',this)">全月</button>
-        <button class="df-btn active" onclick="setDateFilter('today',this)">今天</button>
-        <button class="df-btn" onclick="setDateFilter('week',this)">本周</button>
-        <button class="df-btn" onclick="setDateFilter('done',this)">已过日期</button>
-        <div class="df-divider"></div>
-        <div class="df-range">
-          <span class="df-label">自定义：</span>
-          <input class="df-day-input" id="dfFrom" type="number" min="1" max="30" placeholder="起">
-          <span class="df-range-sep">—</span>
-          <input class="df-day-input" id="dfTo" type="number" min="1" max="30" placeholder="止">
-          <button class="df-apply" onclick="applyCustomRange()">应用</button>
-        </div>
+      <div class="date-filter-bar" style="border-bottom:1px solid var(--border);padding:8px 16px;">
         <span class="edit-hint">💡 点击格子切换状态</span>
         <div class="legend-row">
           <div class="legend-item"><div class="legend-dot" style="background:var(--green-cell);border:1px solid #86efac"></div>已完成</div>
@@ -344,23 +352,6 @@ body{font-family:'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;backgroun
     </div>
 
     <div class="panel" id="panel-stats">
-      <div class="date-filter-bar">
-        <span class="df-label">📅 日期范围：</span>
-        <button class="df-btn active" id="sfBtnAll" onclick="setStatsFilter('all',this)">全月</button>
-        <button class="df-btn" onclick="setStatsFilter('today',this)">今天</button>
-        <button class="df-btn" onclick="setStatsFilter('week',this)">本周</button>
-        <button class="df-btn" onclick="setStatsFilter('done',this)">已过日期</button>
-        <button class="df-btn" id="sfBtnSync" onclick="syncStatsFromCalendar(this)" title="使用日历看板当前选中的日期范围">同步日历</button>
-        <div class="df-divider"></div>
-        <div class="df-range">
-          <span class="df-label">自定义：</span>
-          <input class="df-day-input" id="sfFrom" type="number" min="1" max="30" placeholder="起">
-          <span class="df-range-sep">—</span>
-          <input class="df-day-input" id="sfTo" type="number" min="1" max="30" placeholder="止">
-          <button class="df-apply" onclick="applyStatsRange()">应用</button>
-        </div>
-        <span id="sfRangeLabel" style="margin-left:8px;font-size:12px;color:var(--text3);"></span>
-      </div>
       <div class="stats-grid">
         <div class="chart-card"><div class="chart-card-title">各类别完成情况</div><div id="chartCat" style="height:260px"></div></div>
         <div class="chart-card"><div class="chart-card-title">完成状态占比</div><div id="chartPie" style="height:260px"></div></div>
@@ -462,8 +453,9 @@ function applyData(json){
   // 默认显示今天
   filterRange={from:TODAY,to:TODAY};
   // 同步更新日期筛选输入框最大值
-  document.getElementById('dfFrom').max=MONTH_DAYS;
-  document.getElementById('dfTo').max=MONTH_DAYS;
+  document.getElementById('gfFrom').max=MONTH_DAYS;
+  document.getElementById('gfTo').max=MONTH_DAYS;
+  updateGfLabel();
   renderSidebar(); renderCalendar(); updateKPI();
 }
 
@@ -573,23 +565,37 @@ function updateKPI(){
 }
 
 // ── DATE FILTER ──
-function setDateFilter(mode,btn){
-  document.querySelectorAll('.df-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('dfFrom').value='';
-  document.getElementById('dfTo').value='';
-  if(mode==='all')filterRange=null;
-  else if(mode==='today')filterRange={from:TODAY,to:TODAY};
-  else if(mode==='week')filterRange={from:1,to:7};
-  else if(mode==='done')filterRange={from:1,to:TODAY};
-  renderCalendar();updateKPI();
+function updateGfLabel(){
+  const r=filterRange;
+  const el=document.getElementById('gfRangeLabel');
+  if(!el) return;
+  el.textContent=r?(r.from===r.to?`${r.from}日`:`${r.from}日 — ${r.to}日`):'全月';
 }
-function applyCustomRange(){
-  const f=parseInt(document.getElementById('dfFrom').value)||1;
-  const t=parseInt(document.getElementById('dfTo').value)||MONTH_DAYS;
+function setGlobalFilter(mode,btn){
+  document.querySelectorAll('.gf-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('gfFrom').value='';
+  document.getElementById('gfTo').value='';
+  if(mode==='all') filterRange=null;
+  else if(mode==='today') filterRange={from:TODAY,to:TODAY};
+  else if(mode==='week') filterRange={from:1,to:7};
+  else if(mode==='done') filterRange={from:1,to:TODAY};
+  updateGfLabel();
+  renderCalendar(); updateKPI();
+  const active=document.querySelector('.panel.active');
+  if(active&&active.id==='panel-stats') renderStats();
+  if(active&&active.id==='panel-list') renderList();
+}
+function applyGlobalRange(){
+  const f=parseInt(document.getElementById('gfFrom').value)||1;
+  const t=parseInt(document.getElementById('gfTo').value)||MONTH_DAYS;
   filterRange={from:Math.max(1,f),to:Math.min(MONTH_DAYS,Math.max(f,t))};
-  document.querySelectorAll('.df-btn').forEach(b=>b.classList.remove('active'));
-  renderCalendar();updateKPI();
+  document.querySelectorAll('.gf-btn').forEach(b=>b.classList.remove('active'));
+  updateGfLabel();
+  renderCalendar(); updateKPI();
+  const active=document.querySelector('.panel.active');
+  if(active&&active.id==='panel-stats') renderStats();
+  if(active&&active.id==='panel-list') renderList();
 }
 
 // ── SIDEBAR ──
@@ -711,14 +717,7 @@ function renderList(){
 }
 
 // ── STATS ──
-let statsRange=null; // null=全月
-function getStatsRange(){return statsRange||{from:1,to:MONTH_DAYS};}
-
-function updateSfRangeLabel(){
-  const r=getStatsRange();
-  const el=document.getElementById('sfRangeLabel');
-  if(el) el.textContent=r.from===r.to?`当前：${r.from}日`:`当前：${r.from}日 — ${r.to}日`;
-}
+function getStatsRange(){return filterRange||{from:1,to:MONTH_DAYS};}
 
 // ── 任务明细弹窗 ──
 function openDetailModal(r,label){
@@ -763,38 +762,7 @@ function closeDetailModal(){
   document.body.style.overflow='';
 }
 
-function setStatsFilter(mode,btn){
-  document.querySelectorAll('#panel-stats .df-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('sfFrom').value='';
-  document.getElementById('sfTo').value='';
-  if(mode==='all') statsRange=null;
-  else if(mode==='today') statsRange={from:TODAY,to:TODAY};
-  else if(mode==='week') statsRange={from:1,to:7};
-  else if(mode==='done') statsRange={from:1,to:TODAY};
-  updateSfRangeLabel();
-  renderStats();
-  openDetailModal(getStatsRange(), btn.textContent.trim());
-}
-function applyStatsRange(){
-  const f=parseInt(document.getElementById('sfFrom').value)||1;
-  const t=parseInt(document.getElementById('sfTo').value)||MONTH_DAYS;
-  statsRange={from:Math.max(1,f),to:Math.min(MONTH_DAYS,Math.max(f,t))};
-  document.querySelectorAll('#panel-stats .df-btn').forEach(b=>b.classList.remove('active'));
-  updateSfRangeLabel();
-  renderStats();
-  openDetailModal(getStatsRange(), `${f}日—${t}日`);
-}
-function syncStatsFromCalendar(btn){
-  statsRange=filterRange?{...filterRange}:null;
-  document.querySelectorAll('#panel-stats .df-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('sfFrom').value='';
-  document.getElementById('sfTo').value='';
-  updateSfRangeLabel();
-  renderStats();
-  openDetailModal(getStatsRange(), '同步日历');
-}
+
 
 function initChart(id){
   const el=document.getElementById(id);
@@ -870,7 +838,7 @@ function switchPanel(name,btn){
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('panel-'+name).classList.add('active');
   btn.classList.add('active');
-  if(name==='stats'){updateSfRangeLabel();renderStats();}
+  if(name==='stats') renderStats();
   if(name==='list')renderList();
 }
 function scrollToToday(){const el=document.querySelector('.today-ring');if(el)el.scrollIntoView({behavior:'smooth',block:'center'});}
