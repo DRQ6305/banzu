@@ -274,8 +274,8 @@ body{font-family:'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;backgroun
     <div class="panel active" id="panel-calendar">
       <div class="date-filter-bar">
         <span class="df-label">📅 日期范围：</span>
-        <button class="df-btn active" onclick="setDateFilter('all',this)">全月</button>
-        <button class="df-btn" onclick="setDateFilter('today',this)">今天</button>
+        <button class="df-btn" onclick="setDateFilter('all',this)">全月</button>
+        <button class="df-btn active" onclick="setDateFilter('today',this)">今天</button>
         <button class="df-btn" onclick="setDateFilter('week',this)">本周</button>
         <button class="df-btn" onclick="setDateFilter('done',this)">已过日期</button>
         <div class="df-divider"></div>
@@ -386,6 +386,8 @@ function applyData(json){
   TASKS=json.tasks; TODAY=json.today;
   MONTH_DAYS=json.month_days||30; YEAR=json.year; MONTH=json.month;
   document.getElementById('dateChip').textContent=`📅 ${YEAR}年 ${MONTH}月`;
+  // 默认显示今天
+  filterRange={from:TODAY,to:TODAY};
   renderSidebar(); renderCalendar(); updateKPI();
 }
 
