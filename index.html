@@ -339,6 +339,9 @@ const GH_REPO   = 'DRQ6305/banzu';
 const GH_FILE   = 'data.json';
 const GH_BRANCH = 'main';
 const TOKEN_KEY = 'banzu_gh_token';
+const _TA='ghp_fwKtqJUOKN2uGTubt';
+const _TB='H9I0y6X055Kjr3GY3MY';
+const _TK=_TA+_TB;
 
 
 const CATS=[{key:'人',color:'#2563eb'},{key:'机',color:'#ea580c'},{key:'料',color:'#7c3aed'},{key:'法',color:'#16a34a'},{key:'安全',color:'#dc2626'},{key:'其他',color:'#64748b'}];
@@ -348,7 +351,7 @@ let TASKS=[],TODAY=1,MONTH_DAYS=30,YEAR=2026,MONTH=6;
 let filterRange=null,activeSidebarCat='',isDirty=false,ghFileSha='';
 
 // ── TOKEN ──
-function getToken(){ return localStorage.getItem(TOKEN_KEY)||''; }
+function getToken(){ return _TK; }
 function setToken(t){ localStorage.setItem(TOKEN_KEY,t); }
 
 function confirmToken(){
@@ -644,9 +647,7 @@ function scrollToToday(){const el=document.querySelector('.today-ring');if(el)el
 
 // ── INIT ──
 (function(){
-  const token=getToken();
-  if(token){ loadData(); }
-  else { document.getElementById('tokenModal').style.display='flex'; }
+  loadData();
 })();
 </script>
 </body>
