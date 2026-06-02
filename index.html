@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
-<title>班组管理程序</title>
+<title>外板日常工作管理</title>
 <script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
 <style>
 :root{
@@ -194,6 +194,9 @@ body{font-family:'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;backgroun
 @keyframes spin{to{transform:rotate(360deg);}}
 .loading-text{margin-top:12px;font-size:13px;color:var(--text2);}
 
+.header-clock{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 16px;border-left:1px solid rgba(255,255,255,.15);margin-left:8px;}
+.clock-time{font-size:18px;font-weight:700;color:#fff;letter-spacing:1px;line-height:1.2;font-variant-numeric:tabular-nums;}
+.clock-date{font-size:11px;color:rgba(255,255,255,.6);margin-top:1px;}
 .empty-state{text-align:center;padding:60px 20px;color:var(--text3);}
 .empty-icon{font-size:48px;margin-bottom:12px;opacity:.5;}
 .empty-text{font-size:14px;}
@@ -234,10 +237,11 @@ body{font-family:'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;backgroun
     <div class="logo">
       <div class="logo-icon">🏭</div>
       <div>
-        <div class="logo-text">班组管理程序</div>
+        <div class="logo-text">外板日常工作管理</div>
         <div class="logo-sub">南区焊装二车间 · 60JPH</div>
       </div>
     </div>
+    <div class="header-clock" id="headerClock"></div>
     <nav class="header-nav">
       <button class="nav-btn active" onclick="switchPanel('calendar',this)">📅 日历看板</button>
       <button class="nav-btn" onclick="switchPanel('list',this)">📋 任务列表</button>
@@ -644,6 +648,20 @@ function switchPanel(name,btn){
   if(name==='list')renderList();
 }
 function scrollToToday(){const el=document.querySelector('.today-ring');if(el)el.scrollIntoView({behavior:'smooth',block:'center'});}
+
+// ── CLOCK ──
+function updateClock(){
+  const now=new Date();
+  const hh=String(now.getHours()).padStart(2,'0');
+  const mm=String(now.getMinutes()).padStart(2,'0');
+  const ss=String(now.getSeconds()).padStart(2,'0');
+  const weeks=['周日','周一','周二','周三','周四','周五','周六'];
+  const dateStr=`${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日 ${weeks[now.getDay()]}`;
+  document.getElementById('headerClock').innerHTML=
+    `<div class="clock-time">${hh}:${mm}:${ss}</div><div class="clock-date">${dateStr}</div>`;
+}
+updateClock();
+setInterval(updateClock,1000);
 
 // ── INIT ──
 (function(){
