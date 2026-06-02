@@ -350,6 +350,7 @@ body{font-family:'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;backgroun
         <button class="df-btn" onclick="setStatsFilter('today',this)">今天</button>
         <button class="df-btn" onclick="setStatsFilter('week',this)">本周</button>
         <button class="df-btn" onclick="setStatsFilter('done',this)">已过日期</button>
+        <button class="df-btn" id="sfBtnSync" onclick="syncStatsFromCalendar(this)" title="使用日历看板当前选中的日期范围">同步日历</button>
         <div class="df-divider"></div>
         <div class="df-range">
           <span class="df-label">自定义：</span>
@@ -358,6 +359,7 @@ body{font-family:'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;backgroun
           <input class="df-day-input" id="sfTo" type="number" min="1" max="30" placeholder="止">
           <button class="df-apply" onclick="applyStatsRange()">应用</button>
         </div>
+        <span id="sfRangeLabel" style="margin-left:8px;font-size:12px;color:var(--text3);"></span>
       </div>
       <div class="stats-grid">
         <div class="chart-card"><div class="chart-card-title">各类别完成情况</div><div id="chartCat" style="height:260px"></div></div>
@@ -698,6 +700,12 @@ function renderList(){
 let statsRange=null; // null=全月
 function getStatsRange(){return statsRange||{from:1,to:MONTH_DAYS};}
 
+function updateSfRangeLabel(){
+  const r=getStatsRange();
+  const el=document.getElementById('sfRangeLabel');
+  if(el) el.textContent=r.from===r.to?`当前：${r.from}日`:`当前：${r.from}日 — ${r.to}日`;
+}
+
 function setStatsFilter(mode,btn){
   document.querySelectorAll('#panel-stats .df-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
@@ -707,6 +715,7 @@ function setStatsFilter(mode,btn){
   else if(mode==='today') statsRange={from:TODAY,to:TODAY};
   else if(mode==='week') statsRange={from:1,to:7};
   else if(mode==='done') statsRange={from:1,to:TODAY};
+  updateSfRangeLabel();
   renderStats();
 }
 function applyStatsRange(){
@@ -714,6 +723,17 @@ function applyStatsRange(){
   const t=parseInt(document.getElementById('sfTo').value)||MONTH_DAYS;
   statsRange={from:Math.max(1,f),to:Math.min(MONTH_DAYS,Math.max(f,t))};
   document.querySelectorAll('#panel-stats .df-btn').forEach(b=>b.classList.remove('active'));
+  updateSfRangeLabel();
+  renderStats();
+}
+function syncStatsFromCalendar(btn){
+  // 复制日历看板当前的 filterRange
+  statsRange=filterRange?{...filterRange}:null;
+  document.querySelectorAll('#panel-stats .df-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('sfFrom').value='';
+  document.getElementById('sfTo').value='';
+  updateSfRangeLabel();
   renderStats();
 }
 
@@ -791,7 +811,7 @@ function switchPanel(name,btn){
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('panel-'+name).classList.add('active');
   btn.classList.add('active');
-  if(name==='stats')renderStats();
+  if(name==='stats'){updateSfRangeLabel();renderStats();}
   if(name==='list')renderList();
 }
 function scrollToToday(){const el=document.querySelector('.today-ring');if(el)el.scrollIntoView({behavior:'smooth',block:'center'});}
