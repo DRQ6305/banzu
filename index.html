@@ -52,6 +52,8 @@ body{font-family:'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;backgroun
 .kpi-item:hover::before{transform:scaleX(1);}
 .kpi-item:last-child{border-right:none;}
 .kpi-item:hover{background:var(--bg3);}
+.kpi-link{cursor:pointer;}
+.kpi-link:hover .kpi-num{text-decoration:underline;text-underline-offset:3px;}
 .kpi-item:nth-child(1)::before{background:var(--green);}
 .kpi-item:nth-child(2)::before{background:var(--red);}
 .kpi-item:nth-child(3)::before{background:var(--orange);}
@@ -278,12 +280,12 @@ body{font-family:'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;backgroun
 
 <!-- KPI BAR -->
 <div class="kpi-bar">
-  <div class="kpi-item"><div class="kpi-icon g">✅</div><div><div class="kpi-num g" id="kDone">—</div><div class="kpi-label">已完成次数</div></div></div>
-  <div class="kpi-item"><div class="kpi-icon r">❌</div><div><div class="kpi-num r" id="kUndone">—</div><div class="kpi-label">未完成次数</div></div></div>
-  <div class="kpi-item"><div class="kpi-icon o">➖</div><div><div class="kpi-num o" id="kNA">—</div><div class="kpi-label">不涉及次数</div></div></div>
-  <div class="kpi-item"><div class="kpi-icon" style="background:rgba(148,163,184,.15)">❓</div><div><div class="kpi-num" style="color:#94a3b8" id="kUnfilled">—</div><div class="kpi-label">未填写数量</div></div></div>
-  <div class="kpi-item"><div class="kpi-icon b">📊</div><div><div class="kpi-num b" id="kRate">—</div><div class="kpi-label">任务完成率</div></div></div>
-  <div class="kpi-item"><div class="kpi-icon p">📋</div><div><div class="kpi-num p" id="kTotal">—</div><div class="kpi-label">任务总数</div></div></div>
+  <div class="kpi-item kpi-link" onclick="gotoPanel('stats')" title="查看统计分析"><div class="kpi-icon g">✅</div><div><div class="kpi-num g" id="kDone">—</div><div class="kpi-label">已完成次数</div></div></div>
+  <div class="kpi-item kpi-link" onclick="gotoPanel('calendar')" title="查看日历看板"><div class="kpi-icon r">❌</div><div><div class="kpi-num r" id="kUndone">—</div><div class="kpi-label">未完成次数</div></div></div>
+  <div class="kpi-item kpi-link" onclick="gotoPanel('stats')" title="查看统计分析"><div class="kpi-icon o">➖</div><div><div class="kpi-num o" id="kNA">—</div><div class="kpi-label">不涉及次数</div></div></div>
+  <div class="kpi-item kpi-link" onclick="gotoPanel('calendar')" title="查看日历看板"><div class="kpi-icon" style="background:rgba(148,163,184,.15)">❓</div><div><div class="kpi-num" style="color:#94a3b8" id="kUnfilled">—</div><div class="kpi-label">未填写数量</div></div></div>
+  <div class="kpi-item kpi-link" onclick="gotoPanel('stats')" title="查看统计分析"><div class="kpi-icon b">📊</div><div><div class="kpi-num b" id="kRate">—</div><div class="kpi-label">任务完成率</div></div></div>
+  <div class="kpi-item kpi-link" onclick="gotoPanel('list')" title="查看任务列表"><div class="kpi-icon p">📋</div><div><div class="kpi-num p" id="kTotal">—</div><div class="kpi-label">任务总数</div></div></div>
 </div>
 
 <!-- LAYOUT -->
@@ -745,6 +747,10 @@ function showToast(msg,type=''){
 }
 
 // ── PANEL ──
+function gotoPanel(name){
+  const btn=document.querySelector(`.nav-btn[onclick*="'${name}'"]`);
+  if(btn) switchPanel(name,btn);
+}
 function switchPanel(name,btn){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
