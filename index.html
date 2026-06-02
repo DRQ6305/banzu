@@ -200,22 +200,6 @@ body{font-family:'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;backgroun
 .month-switcher{display:flex;align-items:center;gap:4px;}
 .month-arrow{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff;width:26px;height:26px;border-radius:6px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;transition:background .15s;}
 .month-arrow:hover{background:rgba(255,255,255,.25);}
-.nok-toolbar{background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:14px;box-shadow:var(--shadow-sm);}
-.nok-title-row{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
-.nok-main-title{font-size:15px;font-weight:700;color:var(--text);}
-.nok-refresh-btn{margin-left:auto;padding:5px 14px;border-radius:7px;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);font-size:12px;cursor:pointer;transition:all .15s;}
-.nok-refresh-btn:hover{border-color:var(--primary);color:var(--primary);}
-.nok-filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
-.nok-update-time{font-size:11px;color:var(--text3);margin-left:auto;}
-.nok-kpi-row{display:flex;gap:12px;margin-bottom:14px;flex-wrap:wrap;}
-.nok-kpi-card{flex:1;min-width:140px;background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px 16px;box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:12px;}
-.nok-kpi-icon{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
-.nok-kpi-num{font-size:22px;font-weight:800;line-height:1;}
-.nok-kpi-label{font-size:11px;color:var(--text3);margin-top:3px;}
-.repair-tag{display:inline-flex;padding:2px 8px;border-radius:5px;font-size:11px;font-weight:600;}
-.rt-none{background:#fee2e2;color:#b91c1c;}
-.rt-cur{background:#dcfce7;color:#15803d;}
-.rt-fix{background:#dbeafe;color:#1d4ed8;}
 .empty-state{text-align:center;padding:60px 20px;color:var(--text3);}
 .empty-icon{font-size:48px;margin-bottom:12px;opacity:.5;}
 .empty-text{font-size:14px;}
@@ -265,7 +249,6 @@ body{font-family:'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;backgroun
       <button class="nav-btn active" onclick="switchPanel('calendar',this)">📅 日历看板</button>
       <button class="nav-btn" onclick="switchPanel('list',this)">📋 任务列表</button>
       <button class="nav-btn" onclick="switchPanel('stats',this)">📊 统计分析</button>
-      <button class="nav-btn" onclick="switchPanel('nok',this);loadNOK()">🔩 拧紧NOK</button>
     </nav>
     <div class="header-right">
       <div class="month-switcher">
@@ -359,54 +342,6 @@ body{font-family:'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;backgroun
         <div class="chart-card"><div class="chart-card-title">各类别任务数</div><div id="chartBar" style="height:200px"></div></div>
       </div>
     </div>
-
-    <!-- NOK PANEL -->
-    <div class="panel" id="panel-nok">
-      <div class="nok-toolbar">
-        <div class="nok-title-row">
-          <span class="nok-main-title">🔩 三区二焊拧紧NOK数据</span>
-          <button class="nok-refresh-btn" onclick="loadNOK()">🔄 刷新</button>
-        </div>
-        <div class="nok-filters">
-          <select class="filter-select" id="nokLineFilter" onchange="filterNOK()"><option value="">全部线体</option></select>
-          <select class="filter-select" id="nokRepairFilter" onchange="filterNOK()">
-            <option value="">全部状态</option>
-            <option value="未返修">未返修</option>
-            <option value="已当前工位拧紧OK">已当前工位拧紧OK</option>
-            <option value="已返修工位拧紧OK">已返修工位拧紧OK</option>
-          </select>
-          <input class="search-input" id="nokSearch" placeholder="🔍 搜索BSN/工位/螺栓号…" oninput="filterNOK()" style="max-width:260px">
-          <span class="nok-update-time" id="nokUpdateTime"></span>
-        </div>
-      </div>
-
-      <!-- KPI卡片 -->
-      <div class="nok-kpi-row" id="nokKpiRow"></div>
-
-      <!-- 图表区 -->
-      <div class="stats-grid" style="margin-bottom:14px">
-        <div class="chart-card"><div class="chart-card-title">近7天NOK趋势</div><div id="nokChartTrend" style="height:220px"></div></div>
-        <div class="chart-card"><div class="chart-card-title">今日各线体NOK数</div><div id="nokChartLine" style="height:220px"></div></div>
-      </div>
-
-      <!-- 数据表格 -->
-      <div class="chart-card" style="padding:0;overflow:hidden">
-        <div style="padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:between">
-          <span class="chart-card-title" style="margin-bottom:0">📋 今日明细记录</span>
-          <span id="nokRecordCount" style="font-size:12px;color:var(--text3);margin-left:auto"></span>
-        </div>
-        <div style="overflow-x:auto">
-          <table class="list-table" style="min-width:900px" id="nokTable">
-            <thead><tr>
-              <th>时间</th><th>线体</th><th>工位</th><th>BSN号</th>
-              <th>螺栓号</th><th>扭矩</th><th>角度</th><th>返修状态</th>
-            </tr></thead>
-            <tbody id="nokTableBody"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
   </div>
 </div>
 
@@ -772,142 +707,6 @@ setInterval(updateClock,1000);
 (function(){
   loadData();
 })();
-
-// ── NOK MODULE ──
-const FS_NOK_APP    = 'AMQebtOmHampzbsBbqccriPunuf';
-const FS_NOK_TABLE  = 'tbll9wOHyp8q7vno';
-const FS_APP_ID2    = 'cli_aa841596037ddbed';
-const FS_APP_SEC2   = 'TW3XyDjWWKJH8OE0QEE1rh3tZEYMCgPl';
-let nokData=[], nokFiltered=[], nokFsToken='', nokFsExpire=0;
-let nokChartTrend=null, nokChartLine=null;
-
-
-
-async function loadNOK(){
-  const btn=document.querySelector('.nok-refresh-btn');
-  if(btn) btn.textContent='⏳ 加载中…';
-  try{
-    // 从 GitHub 读取 nok.json（定时任务每30分钟同步一次）
-    const res=await fetch(`https://api.github.com/repos/${GH_REPO}/contents/nok.json`,{
-      headers:{'Authorization':'token '+getToken(),'Accept':'application/vnd.github.v3+json'},
-      cache:'no-store'
-    });
-    if(!res.ok) throw new Error('HTTP '+res.status);
-    const meta=await res.json();
-    const b64=meta.content.replace(/\n/g,'');
-    const bin=atob(b64);
-    const bytes=new Uint8Array(bin.length);
-    for(let i=0;i<bin.length;i++) bytes[i]=bin.charCodeAt(i);
-    const nok=JSON.parse(new TextDecoder('utf-8').decode(bytes));
-    // 填充数据
-    nokData=nok.today_records||[];
-    const lines=nok.all_lines||[];
-    const last7=nok.last7_dates||[];
-    const daily=nok.daily_count||[];
-    const lineDaily=nok.line_daily||{};
-    nokAllData={last7,daily,lines,lineDaily};
-    // 更新线体下拉
-    const sel=document.getElementById('nokLineFilter');
-    sel.innerHTML='<option value="">全部线体</option>'+lines.map(l=>`<option value="${l}">${l}</option>`).join('');
-    const updAt=(nok.updated_at||'').slice(11,16);
-    document.getElementById('nokUpdateTime').textContent=updAt?`数据时间: ${updAt} (每30分钟自动同步)`:'';
-    filterNOK();
-    renderNOKCharts();
-    if(btn) btn.textContent='🔄 刷新';
-  }catch(e){
-    if(btn) btn.textContent='🔄 刷新';
-    showToast('NOK数据加载失败: '+e.message,'error');
-  }
-}
-
-function filterNOK(){
-  const lineF=document.getElementById('nokLineFilter').value;
-  const repairF=document.getElementById('nokRepairFilter').value;
-  const search=document.getElementById('nokSearch').value.toLowerCase();
-  const today=new Date().toISOString().slice(0,10);
-  nokFiltered=nokData.filter(r=>{
-    if(r.date!==today) return false;
-    if(lineF && r.line!==lineF) return false;
-    if(repairF && r.repair!==repairF) return false;
-    if(search && ![r.bsn,r.station,r.bolt].some(v=>v.toLowerCase().includes(search))) return false;
-    return true;
-  });
-  renderNOKKPI();
-  renderNOKTable();
-}
-
-function renderNOKKPI(){
-  const today=new Date().toISOString().slice(0,10);
-  const todayAll=nokData.filter(r=>r.date===today);
-  const total=nokFiltered.length;
-  const unrepaired=nokFiltered.filter(r=>r.repair==='未返修').length;
-  const repaired=nokFiltered.filter(r=>r.repair!=='未返修').length;
-  const rate=total>0?Math.round(repaired/total*100):0;
-  document.getElementById('nokKpiRow').innerHTML=`
-    <div class="nok-kpi-card"><div class="nok-kpi-icon" style="background:#fee2e2">🔩</div><div><div class="nok-kpi-num" style="color:#dc2626">${total}</div><div class="nok-kpi-label">今日NOK总数</div></div></div>
-    <div class="nok-kpi-card"><div class="nok-kpi-icon" style="background:#fef3c7">⚠️</div><div><div class="nok-kpi-num" style="color:#d97706">${unrepaired}</div><div class="nok-kpi-label">未返修</div></div></div>
-    <div class="nok-kpi-card"><div class="nok-kpi-icon" style="background:#dcfce7">✅</div><div><div class="nok-kpi-num" style="color:#16a34a">${repaired}</div><div class="nok-kpi-label">已返修</div></div></div>
-    <div class="nok-kpi-card"><div class="nok-kpi-icon" style="background:#dbeafe">📊</div><div><div class="nok-kpi-num" style="color:#2563eb">${rate}%</div><div class="nok-kpi-label">返修率</div></div></div>
-    <div class="nok-kpi-card"><div class="nok-kpi-icon" style="background:var(--purple-bg)">📅</div><div><div class="nok-kpi-num" style="color:#7c3aed">${todayAll.length}</div><div class="nok-kpi-label">今日全部NOK</div></div></div>
-  `;
-}
-
-function renderNOKTable(){
-  const tbody=document.getElementById('nokTableBody');
-  document.getElementById('nokRecordCount').textContent=`共 ${nokFiltered.length} 条`;
-  if(!nokFiltered.length){
-    tbody.innerHTML='<tr><td colspan="8" style="text-align:center;color:var(--text3);padding:32px">暂无数据</td></tr>';
-    return;
-  }
-  const sorted=[...nokFiltered].sort((a,b)=>b.time.localeCompare(a.time));
-  const repairClass={'未返修':'rt-none','已当前工位拧紧OK':'rt-cur','已返修工位拧紧OK':'rt-fix'};
-  tbody.innerHTML=sorted.map(r=>`
-    <tr>
-      <td>${r.time.slice(11)||'—'}</td>
-      <td><span style="font-size:12px;font-weight:600;color:var(--primary)">${r.line}</span></td>
-      <td>${r.station}</td>
-      <td style="font-family:monospace;font-size:12px">${r.bsn}</td>
-      <td style="font-size:11px;color:var(--text2);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.bolt}">${r.bolt}</td>
-      <td style="font-weight:600">${r.torque}</td>
-      <td>${r.angle}</td>
-      <td><span class="repair-tag ${repairClass[r.repair]||'rt-none'}">${r.repair}</span></td>
-    </tr>`).join('');
-}
-
-function renderNOKCharts(){
-  try{
-    // 近7天趋势
-    const today=new Date();
-    const last7=[...Array(7)].map((_,i)=>{
-      const d=new Date(today); d.setDate(d.getDate()-6+i);
-      return d.toISOString().slice(0,10);
-    });
-    const daily=last7.map(d=>nokData.filter(r=>r.date===d).length);
-    if(!nokChartTrend) nokChartTrend=echarts.init(document.getElementById('nokChartTrend'));
-    nokChartTrend.setOption({
-      tooltip:{trigger:'axis'},
-      grid:{top:20,bottom:30,left:40,right:20},
-      xAxis:{type:'category',data:last7.map(d=>d.slice(5)),axisLabel:{fontSize:11}},
-      yAxis:{type:'value',minInterval:1},
-      series:[{type:'bar',data:daily,itemStyle:{color:'#dc2626',borderRadius:[4,4,0,0]},label:{show:true,position:'top',fontSize:11}}]
-    });
-  }catch(e){console.error('NOK趋势图错误:',e);}
-
-  try{
-    // 今日各线体
-    const today=new Date().toISOString().slice(0,10);
-    const lines=[...new Set(nokData.map(r=>r.line).filter(Boolean))].sort();
-    const lineCounts=lines.map(l=>nokData.filter(r=>r.date===today&&r.line===l).length);
-    if(!nokChartLine) nokChartLine=echarts.init(document.getElementById('nokChartLine'));
-    nokChartLine.setOption({
-      tooltip:{trigger:'axis'},
-      grid:{top:20,bottom:50,left:40,right:20},
-      xAxis:{type:'category',data:lines,axisLabel:{fontSize:10,rotate:20}},
-      yAxis:{type:'value',minInterval:1},
-      series:[{type:'bar',data:lineCounts,itemStyle:{color:'#f97316',borderRadius:[4,4,0,0]},label:{show:true,position:'top',fontSize:11}}]
-    });
-  }catch(e){console.error('NOK线体图错误:',e);}
-}
 
 </script>
 </body>
