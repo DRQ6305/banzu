@@ -280,12 +280,12 @@ body{font-family:'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;backgroun
 
 <!-- KPI BAR -->
 <div class="kpi-bar">
-  <div class="kpi-item kpi-link" onclick="gotoPanel('stats')" title="查看统计分析"><div class="kpi-icon g">✅</div><div><div class="kpi-num g" id="kDone">—</div><div class="kpi-label">已完成次数</div></div></div>
-  <div class="kpi-item kpi-link" onclick="gotoPanel('calendar')" title="查看日历看板"><div class="kpi-icon r">❌</div><div><div class="kpi-num r" id="kUndone">—</div><div class="kpi-label">未完成次数</div></div></div>
-  <div class="kpi-item kpi-link" onclick="gotoPanel('stats')" title="查看统计分析"><div class="kpi-icon o">➖</div><div><div class="kpi-num o" id="kNA">—</div><div class="kpi-label">不涉及次数</div></div></div>
-  <div class="kpi-item kpi-link" onclick="gotoPanel('calendar')" title="查看日历看板"><div class="kpi-icon" style="background:rgba(148,163,184,.15)">❓</div><div><div class="kpi-num" style="color:#94a3b8" id="kUnfilled">—</div><div class="kpi-label">未填写数量</div></div></div>
+  <div class="kpi-item kpi-link" onclick="setListStatusFilter(1)" title="查看已完成任务"><div class="kpi-icon g">✅</div><div><div class="kpi-num g" id="kDone">—</div><div class="kpi-label">已完成次数</div></div></div>
+  <div class="kpi-item kpi-link" onclick="setListStatusFilter(2)" title="查看未完成任务"><div class="kpi-icon r">❌</div><div><div class="kpi-num r" id="kUndone">—</div><div class="kpi-label">未完成次数</div></div></div>
+  <div class="kpi-item kpi-link" onclick="setListStatusFilter(3)" title="查看不涉及任务"><div class="kpi-icon o">➖</div><div><div class="kpi-num o" id="kNA">—</div><div class="kpi-label">不涉及次数</div></div></div>
+  <div class="kpi-item kpi-link" onclick="setListStatusFilter(0)" title="查看未填写任务"><div class="kpi-icon" style="background:rgba(148,163,184,.15)">❓</div><div><div class="kpi-num" style="color:#94a3b8" id="kUnfilled">—</div><div class="kpi-label">未填写数量</div></div></div>
   <div class="kpi-item kpi-link" onclick="gotoPanel('stats')" title="查看统计分析"><div class="kpi-icon b">📊</div><div><div class="kpi-num b" id="kRate">—</div><div class="kpi-label">任务完成率</div></div></div>
-  <div class="kpi-item kpi-link" onclick="gotoPanel('list')" title="查看任务列表"><div class="kpi-icon p">📋</div><div><div class="kpi-num p" id="kTotal">—</div><div class="kpi-label">任务总数</div></div></div>
+  <div class="kpi-item kpi-link" onclick="listStatusFilter=null;gotoPanel('list')" title="查看全部任务"><div class="kpi-icon p">📋</div><div><div class="kpi-num p" id="kTotal">—</div><div class="kpi-label">任务总数</div></div></div>
 </div>
 
 <!-- LAYOUT -->
@@ -339,6 +339,7 @@ body{font-family:'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;backgroun
         </select>
         <input class="search-input" id="searchInput" placeholder="🔍 搜索任务名称…" oninput="renderList()">
       </div>
+      <div id="statusFilterTag" style="display:none;padding:6px 16px 0;"></div>
       <div id="listView"></div>
     </div>
 
@@ -634,14 +635,48 @@ function renderCalendar(){
 }
 
 // ── LIST ──
+let listStatusFilter=null; // null=全部, 1=已完成, 2=未完成, 3=不涉及, 0=未填写
+
+const STATUS_LABEL={1:{text:'已完成',color:'#16a34a',bg:'#dcfce7'},2:{text:'未完成',color:'#dc2626',bg:'#fee2e2'},3:{text:'不涉及',color:'#d97706',bg:'#fef9c3'},0:{text:'未填写',color:'#94a3b8',bg:'#f1f5f9'}};
+
+function setListStatusFilter(s){
+  listStatusFilter=s;
+  gotoPanel('list');
+}
+
+function clearListStatusFilter(){
+  listStatusFilter=null;
+  renderList();
+}
+
 function renderList(){
   const catF=document.getElementById('filterCat').value;
   const freqF=document.getElementById('filterFreq').value;
   const search=document.getElementById('searchInput').value.trim().toLowerCase();
+
+  // 状态筛选标签
+  const tagEl=document.getElementById('statusFilterTag');
+  if(listStatusFilter!==null){
+    const lbl=STATUS_LABEL[listStatusFilter];
+    tagEl.style.display='block';
+    tagEl.innerHTML=`<span style="display:inline-flex;align-items:center;gap:6px;background:${lbl.bg};color:${lbl.color};border:1px solid ${lbl.color}33;border-radius:20px;padding:3px 12px;font-size:13px;font-weight:600;">
+      ${lbl.text} <span style="cursor:pointer;font-size:15px;opacity:.7" onclick="clearListStatusFilter()">✕</span></span>
+      <span style="color:var(--text3);font-size:13px;margin-left:6px;">仅展示含"${lbl.text}"记录的任务，点击 ✕ 清除</span>`;
+  } else {
+    tagEl.style.display='none';tagEl.innerHTML='';
+  }
+
   const tasks=TASKS.filter(t=>{
     if(catF&&t.cat!==catF)return false;
     if(freqF&&t.freq!==freqF)return false;
     if(search&&!t.name.toLowerCase().includes(search))return false;
+    if(listStatusFilter!==null){
+      if(listStatusFilter===0){
+        // 未填写：TODAY之内有 s===0 的天
+        return t.days.slice(0,TODAY).some(s=>s===0);
+      }
+      return t.days.slice(0,TODAY).some(s=>s===listStatusFilter);
+    }
     return true;
   });
   if(!tasks.length){document.getElementById('listView').innerHTML='<div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-text">没有匹配的任务</div></div>';return;}
