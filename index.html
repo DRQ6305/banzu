@@ -96,7 +96,7 @@ body{font-family:'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;backgroun
 .sidebar-item.active .sidebar-count{background:rgba(37,99,235,.12);color:var(--primary);}
 
 /* MAIN */
-.main{flex:1;overflow-y:auto;background:var(--bg);}
+.main{flex:1;overflow:auto;background:var(--bg);}
 .main::-webkit-scrollbar{width:5px;}
 .main::-webkit-scrollbar-thumb{background:var(--bg5);border-radius:3px;}
 .panel{display:none;padding:20px 24px 48px;}
@@ -120,35 +120,50 @@ body{font-family:'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;backgroun
 .legend-dot{width:12px;height:12px;border-radius:3px;}
 .edit-hint{font-size:11px;color:var(--text3);background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:3px 10px;}
 
-/* CATEGORY */
-.cat-section{margin-bottom:22px;}
-.cat-header{display:flex;align-items:center;gap:10px;margin-bottom:8px;padding:11px 16px;background:#fff;border-radius:11px;border:1px solid var(--border);border-left:4px solid #2563eb;box-shadow:var(--shadow-sm);transition:box-shadow .2s;}
-.cat-header:hover{box-shadow:var(--shadow-md);}
+/* CATEGORY SHARED */
 .cat-badge{padding:4px 11px;border-radius:16px;font-size:11px;font-weight:800;color:#fff;letter-spacing:.3px;box-shadow:0 2px 6px rgba(0,0,0,.15);}
 .cat-title{font-size:13px;font-weight:600;color:var(--text);}
-.cat-progress-wrap{flex:1;height:5px;background:var(--bg4);border-radius:3px;overflow:hidden;margin:0 12px;}
+.cat-progress-wrap{flex:1;height:5px;background:var(--bg4);border-radius:3px;overflow:hidden;margin:0 12px;max-width:200px;}
 .cat-progress-fill{height:100%;border-radius:3px;transition:width .7s cubic-bezier(.4,0,.2,1);}
 .cat-pct{font-size:12px;color:var(--text2);white-space:nowrap;min-width:76px;text-align:right;font-weight:500;}
 
-/* TASK ROW */
-.task-row{background:#fff;border:1px solid var(--border);border-radius:11px;margin-bottom:7px;overflow:hidden;transition:border-color .2s,box-shadow .2s,transform .15s;box-shadow:var(--shadow-sm);}
-.task-row:hover{border-color:var(--primary-light);box-shadow:0 4px 16px rgba(37,99,235,.1),0 2px 6px rgba(0,0,0,.04);transform:translateY(-1px);}
-.task-top{display:grid;grid-template-columns:200px 80px 1fr;border-bottom:1px solid var(--bg4);}
-.task-cell{padding:11px 14px;display:flex;align-items:center;border-right:1px solid var(--bg4);}
-.task-cell:last-child{border-right:none;}
+/* CAL TABLE */
+.cal-wrap{background:#fff;border-radius:12px;border:1px solid var(--border);box-shadow:var(--shadow-sm);}
+.cal-table{border-collapse:separate;border-spacing:0;width:max-content;min-width:100%;}
+.cal-thead-row th{position:sticky;top:0;background:var(--bg3);z-index:10;padding:8px 4px;font-size:11px;font-weight:700;color:var(--text3);text-align:center;border-bottom:2px solid var(--border2);white-space:nowrap;}
+.cal-th-name{text-align:left!important;padding-left:16px!important;min-width:220px;width:220px;}
+.cal-th-freq{min-width:70px;width:70px;}
+.cal-th-link{min-width:160px;width:160px;text-align:left!important;padding-left:10px!important;}
+.cal-th-day{min-width:42px;width:42px;}
+.cal-today-hdr{color:var(--orange)!important;background:#fff7ed!important;}
+.cal-th-day.dimmed{opacity:.35;}
+.sc1{position:sticky;left:0;z-index:5;}
+.sc2{position:sticky;left:220px;z-index:5;}
+.sc3{position:sticky;left:290px;z-index:5;}
+.cal-thead-row .sc1,.cal-thead-row .sc2,.cal-thead-row .sc3{z-index:20;}
+.cal-cat-row{cursor:pointer;}
+.cal-cat-row td{background:#f8fafc;border-top:8px solid var(--bg);}
+.cal-cat-inner{display:flex;align-items:center;gap:10px;padding:10px 16px;}
+.cat-collapse-arrow{font-size:12px;color:var(--text3);margin-left:4px;flex-shrink:0;transition:transform .2s;}
+.cal-task-row{background:#fff;}
+.cal-task-row:hover{background:var(--bg3);}
+.cal-task-row:hover .cal-td-name,.cal-task-row:hover .cal-td-freq,.cal-task-row:hover .cal-td-link{background:var(--bg3);}
+.cal-task-row td{border-bottom:1px solid var(--bg4);}
+.cal-td-name{padding:9px 12px 9px 16px;min-width:220px;width:220px;background:#fff;border-right:1px solid var(--bg4);}
+.cal-td-freq{padding:9px 8px;min-width:70px;width:70px;text-align:center;background:#fff;border-right:1px solid var(--bg4);}
+.cal-td-link{padding:9px 10px;min-width:160px;width:160px;background:#fff;border-right:1px solid var(--border2);}
+.cal-dc-cell{padding:3px 2px;text-align:center;vertical-align:middle;}
 .task-name{font-size:13px;font-weight:600;color:var(--text);line-height:1.4;}
-.freq-tag{display:inline-flex;padding:3px 10px;border-radius:6px;font-size:11px;font-weight:700;letter-spacing:.2px;}
+.freq-tag{display:inline-flex;padding:3px 9px;border-radius:6px;font-size:11px;font-weight:700;letter-spacing:.2px;}
 .ft{background:#dbeafe;color:#1d4ed8;}.fw{background:#ede9fe;color:#6d28d9;}
 .fm{background:#dcfce7;color:#15803d;}.fn{background:#fef3c7;color:#b45309;}
 .fo{background:var(--bg4);color:var(--text2);}
 .link-pill{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:var(--primary-bg);border:1px solid var(--primary-border);border-radius:8px;color:var(--primary);font-size:12px;font-weight:500;text-decoration:none;transition:all .2s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;}
 .link-pill:hover{background:#dbeafe;border-color:var(--primary);transform:translateY(-1px);box-shadow:0 2px 8px rgba(37,99,235,.2);}
 
-/* DAYS GRID */
-.days-wrap{padding:8px 14px 11px;background:linear-gradient(180deg,var(--bg4) 0%,var(--bg3) 100%);}
-.days-grid{display:flex;flex-wrap:wrap;gap:4px;}
-.dc{width:32px;height:32px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;cursor:pointer;transition:transform .1s,box-shadow .1s;position:relative;user-select:none;}
-.dc:hover{transform:scale(1.22);z-index:5;box-shadow:0 3px 10px rgba(0,0,0,.18);}
+/* DAY CELLS */
+.dc{width:36px;height:36px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;cursor:pointer;transition:transform .1s,box-shadow .1s;position:relative;user-select:none;margin:0 auto;}
+.dc:hover{transform:scale(1.2);z-index:6;box-shadow:0 3px 10px rgba(0,0,0,.18);}
 .dc:active{transform:scale(1.08);}
 .dc.s1{background:linear-gradient(135deg,#bbf7d0,#86efac);color:#15803d;box-shadow:0 1px 3px rgba(22,163,74,.2);}
 .dc.s2{background:linear-gradient(135deg,#fecaca,#fca5a5);color:#b91c1c;box-shadow:0 1px 3px rgba(220,38,38,.2);}
@@ -225,6 +240,8 @@ body{font-family:'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;backgroun
 ::-webkit-scrollbar-thumb{background:var(--bg5);border-radius:3px;}
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
 .panel.active{animation:fadeIn .2s ease;}
+#panel-calendar{padding:16px 0 48px;}
+#panel-calendar .date-filter-bar{margin:0 20px 16px;}
 
 </style>
 </head>
@@ -504,10 +521,18 @@ function updateCatProgress(catKey){
   let done=0,na=0;
   tasks.forEach(t=>{for(let i=r.from-1;i<r.to;i++){const s=t.days[i]??0;if(s===1)done++;else if(s===3)na++;}});
   const pct=tasks.length>0?Math.round((done+na)/tasks.length*100):100;
-  const sec=document.querySelector(`.cat-section[data-cat="${catKey}"]`);
-  if(!sec)return;
-  sec.querySelector('.cat-progress-fill').style.width=pct+'%';
-  sec.querySelector('.cat-pct').innerHTML=`${done+na}/${tasks.length}&nbsp;<strong style="color:${getCatColor(catKey)}">${pct}%</strong>`;
+  const row=document.querySelector(`.cal-cat-row[data-cat="${catKey}"]`);
+  if(!row)return;
+  row.querySelector('.cat-progress-fill').style.width=pct+'%';
+  row.querySelector('.cat-pct').innerHTML=`${done+na}/${tasks.length}&nbsp;<strong style="color:${getCatColor(catKey)}">${pct}%</strong>`;
+}
+function toggleCatCollapse(catKey){
+  const rows=document.querySelectorAll(`.cal-task-row[data-cat="${catKey}"]`);
+  const catRow=document.querySelector(`.cal-cat-row[data-cat="${catKey}"]`);
+  const arrow=catRow?.querySelector('.cat-collapse-arrow');
+  const collapsed=rows[0]?.style.display==='none';
+  rows.forEach(r=>r.style.display=collapsed?'':'none');
+  if(arrow)arrow.style.transform=collapsed?'':'rotate(-90deg)';
 }
 
 // ── HELPERS ──
@@ -598,40 +623,71 @@ function renderCalendar(){
   const filtered=activeSidebarCat?TASKS.filter(t=>t.cat===activeSidebarCat):TASKS;
   const catGroups=activeSidebarCat?[activeSidebarCat]:CATS.map(c=>c.key);
   const r=getEffectiveRange();
-  let html='';
+  let dayHeaders='';
+  for(let d=1;d<=MONTH_DAYS;d++){
+    const inRange=filterRange===null||(d>=filterRange.from&&d<=filterRange.to);
+    dayHeaders+=`<th class="cal-th-day${d===TODAY?' cal-today-hdr':''}${inRange?'':' dimmed'}">${d}</th>`;
+  }
+  let tbody='';
+  let hasAny=false;
+  const colspan=3+MONTH_DAYS;
   catGroups.forEach(catKey=>{
     const tasks=filtered.filter(t=>t.cat===catKey);
     if(!tasks.length)return;
+    hasAny=true;
     const color=getCatColor(catKey);
     let done=0,na=0;
     tasks.forEach(t=>{for(let i=r.from-1;i<r.to;i++){const s=t.days[i]??0;if(s===1)done++;else if(s===3)na++;}});
     const pct=tasks.length>0?Math.round((done+na)/tasks.length*100):100;
-    html+=`<div class="cat-section" data-cat="${catKey}">
-      <div class="cat-header" style="border-left-color:${color}">
-        <span class="cat-badge" style="background:${color}">${catKey}</span>
-        <span class="cat-title">类任务 · ${tasks.length}项</span>
-        <div class="cat-progress-wrap"><div class="cat-progress-fill" style="width:${pct}%;background:${color}"></div></div>
-        <span class="cat-pct">${done+na}/${tasks.length}&nbsp;<strong style="color:${color}">${pct}%</strong></span>
-      </div>`;
+    tbody+=`<tr class="cal-cat-row" data-cat="${catKey}" onclick="toggleCatCollapse('${catKey}')">
+      <td colspan="${colspan}" style="border-left:4px solid ${color}">
+        <div class="cal-cat-inner">
+          <span class="cat-badge" style="background:${color}">${catKey}</span>
+          <span class="cat-title">类任务 · ${tasks.length}项</span>
+          <div class="cat-progress-wrap"><div class="cat-progress-fill" style="width:${pct}%;background:${color}"></div></div>
+          <span class="cat-pct">${done+na}/${tasks.length}&nbsp;<strong style="color:${color}">${pct}%</strong></span>
+          <span class="cat-collapse-arrow">▾</span>
+        </div>
+      </td></tr>`;
     tasks.forEach(t=>{
       const ti=TASKS.indexOf(t);
       const fc=getFreqClass(t.freq);
       const linkHtml=t.linkUrl?`<a class="link-pill" href="${t.linkUrl}" target="_blank">🔗 ${t.linkText||'查看'}</a>`:`<span style="color:var(--text3);font-size:12px">—</span>`;
-      let daysHtml='';
+      let dayCells='';
       for(let i=0;i<MONTH_DAYS;i++){
         const s=t.days[i]??0,day=i+1;
         const inRange=filterRange===null||(day>=filterRange.from&&day<=filterRange.to);
-        daysHtml+=`<div class="dc s${s}${day===TODAY?' today-ring':''}${inRange?'':' dimmed'}" data-ti="${ti}" data-di="${i}" title="${day}日·${statusLabel(s)}" onclick="toggleDay(${ti},${i})">${day}</div>`;
+        dayCells+=`<td class="cal-dc-cell"><div class="dc s${s}${day===TODAY?' today-ring':''}${inRange?'':' dimmed'}" data-ti="${ti}" data-di="${i}" title="${day}日·${statusLabel(s)}" onclick="toggleDay(${ti},${i})">${day}</div></td>`;
       }
-      html+=`<div class="task-row"><div class="task-top">
-        <div class="task-cell"><span class="task-name">${t.name}</span></div>
-        <div class="task-cell"><span class="freq-tag ${fc}">${t.freq}</span></div>
-        <div class="task-cell">${linkHtml}</div>
-      </div><div class="days-wrap"><div class="days-grid">${daysHtml}</div></div></div>`;
+      tbody+=`<tr class="cal-task-row" data-cat="${catKey}">
+        <td class="cal-td-name sc1"><span class="task-name">${t.name}</span></td>
+        <td class="cal-td-freq sc2"><span class="freq-tag ${fc}">${t.freq}</span></td>
+        <td class="cal-td-link sc3">${linkHtml}</td>
+        ${dayCells}</tr>`;
     });
-    html+='</div>';
   });
-  view.innerHTML=html||'<div class="empty-state"><div class="empty-icon">📭</div><div class="empty-text">暂无任务</div></div>';
+  if(!hasAny){
+    view.innerHTML='<div class="empty-state"><div class="empty-icon">📭</div><div class="empty-text">暂无任务</div></div>';
+    return;
+  }
+  view.innerHTML=`<div class="cal-wrap"><table class="cal-table">
+    <thead><tr class="cal-thead-row">
+      <th class="cal-th-name sc1">任务名称</th>
+      <th class="cal-th-freq sc2">频次</th>
+      <th class="cal-th-link sc3">链接</th>
+      ${dayHeaders}
+    </tr></thead>
+    <tbody>${tbody}</tbody>
+  </table></div>`;
+  // 自动滚动到今天
+  setTimeout(()=>{
+    const main=document.getElementById('mainScroll');
+    if(!main||TODAY<=1)return;
+    const leftW=220+70+160;
+    const dayW=42;
+    const target=leftW+(TODAY-1)*dayW-main.clientWidth/2+dayW/2;
+    main.scrollLeft=Math.max(0,target);
+  },60);
 }
 
 
