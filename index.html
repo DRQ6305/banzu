@@ -415,7 +415,6 @@ const GH_REPO   = 'DRQ6305/banzu';
 const GH_FILE   = 'data.json';
 const GH_BRANCH = 'main';
 const TOKEN_KEY = 'banzu_gh_token';
-const FS_PROXY  = 'https://feishu-proxy-navy.vercel.app/api/proxy';
 const _TA='ghp_fwKtqJUOKN2uGTubt';
 const _TB='H9I0y6X055Kjr3GY3MY';
 const _TK=_TA+_TB;
@@ -782,63 +781,36 @@ const FS_APP_SEC2   = 'TW3XyDjWWKJH8OE0QEE1rh3tZEYMCgPl';
 let nokData=[], nokFiltered=[], nokFsToken='', nokFsExpire=0;
 let nokChartTrend=null, nokChartLine=null;
 
-async function getNokFsToken(){
-  if(nokFsToken && Date.now()<nokFsExpire) return nokFsToken;
-  const r=await fetch(FS_PROXY+'/open-apis/auth/v3/tenant_access_token/internal',{
-    method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({app_id:FS_APP_ID2,app_secret:FS_APP_SEC2})
-  });
-  const d=await r.json();
-  if(d.code!==0) throw new Error('飞书Token失败:'+d.msg);
-  nokFsToken=d.tenant_access_token;
-  nokFsExpire=Date.now()+(d.expire-60)*1000;
-  return nokFsToken;
-}
+
 
 async function loadNOK(){
   const btn=document.querySelector('.nok-refresh-btn');
   if(btn) btn.textContent='⏳ 加载中…';
   try{
-    const token=await getNokFsToken();
-    const today=new Date().toISOString().slice(0,10);
-    // 读取今天数据（多页）
-    let allRecs=[]; let pageToken=''; let hasMore=true;
-    while(hasMore){
-      const params=new URLSearchParams({page_size:'100'});
-      if(pageToken) params.set('page_token',pageToken);
-      const r=await fetch(`${FS_PROXY}/open-apis/bitable/v1/apps/${FS_NOK_APP}/tables/${FS_NOK_TABLE}/records?${params}`,{
-        headers:{'Authorization':'Bearer '+token}
-      });
-      const d=await r.json();
-      if(d.code!==0) throw new Error(d.msg);
-      allRecs=allRecs.concat(d.data.items||[]);
-      hasMore=d.data.has_more; pageToken=d.data.page_token||'';
-      if(allRecs.length>=2000) break;
-    }
-    // 解析记录
-    const repairMap={'None':'未返修','':'未返修','未返修':'未返修','已当前工位拧紧OK':'已当前工位拧紧OK','已返修工位拧紧OK':'已返修工位拧紧OK'};
-    nokData=allRecs.map(item=>{
-      const f=item.fields;
-      const ts=f['日期'];
-      const date=ts?new Date(ts).toISOString().slice(0,10):'';
-      return {
-        date,line:f['线体']||'',station:f['工位']||'',bsn:f['BSN号']||'',
-        bolt:f['螺栓号']||'',torque:String(f['扭矩']||''),angle:String(f['角度']||''),
-        time:(f['时间']||'').slice(0,16),
-        repair:repairMap[String(f['返修状态'])]||String(f['返修状态']||'未返修')
-      };
+    // 从 GitHub 读取 nok.json（定时任务每30分钟同步一次）
+    const res=await fetch(`https://api.github.com/repos/${GH_REPO}/contents/nok.json`,{
+      headers:{'Authorization':'token '+getToken(),'Accept':'application/vnd.github.v3+json'},
+      cache:'no-store'
     });
-    // 构建 nokAllData 供图表使用
-    const lines=[...new Set(nokData.map(r=>r.line).filter(Boolean))].sort();
-    const last7=[...Array(7)].map((_,i)=>{const d=new Date();d.setDate(d.getDate()-6+i);return d.toISOString().slice(0,10);});
-    const daily=last7.map(d=>nokData.filter(r=>r.date===d).length);
-    const lineDaily={};
-    lines.forEach(l=>{lineDaily[l]=last7.map(d=>nokData.filter(r=>r.date===d&&r.line===l).length);});
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const meta=await res.json();
+    const b64=meta.content.replace(/\n/g,'');
+    const bin=atob(b64);
+    const bytes=new Uint8Array(bin.length);
+    for(let i=0;i<bin.length;i++) bytes[i]=bin.charCodeAt(i);
+    const nok=JSON.parse(new TextDecoder('utf-8').decode(bytes));
+    // 填充数据
+    nokData=nok.today_records||[];
+    const lines=nok.all_lines||[];
+    const last7=nok.last7_dates||[];
+    const daily=nok.daily_count||[];
+    const lineDaily=nok.line_daily||{};
     nokAllData={last7,daily,lines,lineDaily};
     // 更新线体下拉
     const sel=document.getElementById('nokLineFilter');
     sel.innerHTML='<option value="">全部线体</option>'+lines.map(l=>`<option value="${l}">${l}</option>`).join('');
-    document.getElementById('nokUpdateTime').textContent='更新于 '+new Date().toLocaleTimeString('zh-CN');
+    const updAt=(nok.updated_at||'').slice(11,16);
+    document.getElementById('nokUpdateTime').textContent=updAt?`数据时间: ${updAt} (每30分钟自动同步)`:'';
     filterNOK();
     renderNOKCharts();
     if(btn) btn.textContent='🔄 刷新';
