@@ -197,6 +197,9 @@ body{font-family:'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;backgroun
 .header-clock{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 16px;border-left:1px solid rgba(255,255,255,.15);margin-left:8px;}
 .clock-time{font-size:18px;font-weight:700;color:#fff;letter-spacing:1px;line-height:1.2;font-variant-numeric:tabular-nums;}
 .clock-date{font-size:11px;color:rgba(255,255,255,.6);margin-top:1px;}
+.month-switcher{display:flex;align-items:center;gap:4px;}
+.month-arrow{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff;width:26px;height:26px;border-radius:6px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;transition:background .15s;}
+.month-arrow:hover{background:rgba(255,255,255,.25);}
 .empty-state{text-align:center;padding:60px 20px;color:var(--text3);}
 .empty-icon{font-size:48px;margin-bottom:12px;opacity:.5;}
 .empty-text{font-size:14px;}
@@ -248,7 +251,11 @@ body{font-family:'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;backgroun
       <button class="nav-btn" onclick="switchPanel('stats',this)">📊 统计分析</button>
     </nav>
     <div class="header-right">
-      <span class="date-chip" id="dateChip">📅 —</span>
+      <div class="month-switcher">
+        <button class="month-arrow" onclick="switchMonth(-1)">&#8249;</button>
+        <span class="date-chip" id="dateChip">📅 —</span>
+        <button class="month-arrow" onclick="switchMonth(1)">&#8250;</button>
+      </div>
       <button class="today-btn" onclick="scrollToToday()">定位今天</button>
       <button class="save-btn" id="saveBtn" onclick="saveData()">
         <div class="dirty-dot"></div>
@@ -352,6 +359,7 @@ const CATS=[{key:'人',color:'#2563eb'},{key:'机',color:'#ea580c'},{key:'料',c
 const FREQ_CLASS={天:'ft',周:'fw',月:'fm',按需:'fn'};
 
 let TASKS=[],TODAY=1,MONTH_DAYS=30,YEAR=2026,MONTH=6;
+let ALL_MONTHS={},CURRENT_MONTH=6;
 let filterRange=null,activeSidebarCat='',isDirty=false,ghFileSha='';
 
 // ── TOKEN ──
@@ -382,7 +390,18 @@ async function loadData(){
     const bytes2=new Uint8Array(binStr2.length);
     for(let i=0;i<binStr2.length;i++) bytes2[i]=binStr2.charCodeAt(i);
     const json=JSON.parse(new TextDecoder('utf-8').decode(bytes2));
-    applyData(json);
+    // 支持多月结构
+    if(json.months){
+      ALL_MONTHS=json.months;
+      CURRENT_MONTH=json.current_month||6;
+      YEAR=json.year||2026;
+    } else {
+      // 兼容旧单月结构
+      ALL_MONTHS={[json.month]:json};
+      CURRENT_MONTH=json.month;
+      YEAR=json.year;
+    }
+    applyData(ALL_MONTHS[String(CURRENT_MONTH)]);
   }catch(e){
     showToast('加载失败: '+e.message,'error');
     console.error(e);
@@ -393,10 +412,13 @@ async function loadData(){
 
 function applyData(json){
   TASKS=json.tasks; TODAY=json.today;
-  MONTH_DAYS=json.month_days||30; YEAR=json.year; MONTH=json.month;
+  MONTH_DAYS=json.month_days||30; MONTH=json.month;
   document.getElementById('dateChip').textContent=`📅 ${YEAR}年 ${MONTH}月`;
   // 默认显示今天
   filterRange={from:TODAY,to:TODAY};
+  // 同步更新日期筛选输入框最大值
+  document.getElementById('dfFrom').max=MONTH_DAYS;
+  document.getElementById('dfTo').max=MONTH_DAYS;
   renderSidebar(); renderCalendar(); updateKPI();
 }
 
@@ -407,7 +429,9 @@ async function saveData(){
   const txt=document.getElementById('saveBtnText');
   btn.classList.add('saving'); txt.textContent='⏳ 保存中…';
   try{
-    const payload={year:YEAR,month:MONTH,today:TODAY,month_days:MONTH_DAYS,tasks:TASKS};
+    // 更新当前月数据到 ALL_MONTHS
+    ALL_MONTHS[String(CURRENT_MONTH)]={year:YEAR,month:MONTH,today:TODAY,month_days:MONTH_DAYS,tasks:TASKS};
+    const payload={year:YEAR,current_month:CURRENT_MONTH,months:ALL_MONTHS};
     const jsonStr=JSON.stringify(payload,null,2);
     const bytes=new TextEncoder().encode(jsonStr);
     const binStr=Array.from(bytes).map(b=>String.fromCharCode(b)).join('');
@@ -472,6 +496,22 @@ function getCatColor(cat){const c=CATS.find(x=>x.key===cat);return c?c.color:'#6
 function getFreqClass(freq){return FREQ_CLASS[freq]||'fo';}
 function statusLabel(s){return['未填写','已完成','未完成','不涉及'][s];}
 function getEffectiveRange(){return filterRange||{from:1,to:TODAY};}
+// ── MONTH SWITCH ──
+function switchMonth(dir){
+  const months=Object.keys(ALL_MONTHS).map(Number).sort((a,b)=>a-b);
+  const idx=months.indexOf(CURRENT_MONTH);
+  const newIdx=idx+dir;
+  if(newIdx<0||newIdx>=months.length){showToast('没有更多月份了','');return;}
+  // 保存当前月修改
+  ALL_MONTHS[String(CURRENT_MONTH)]={year:YEAR,month:MONTH,today:TODAY,month_days:MONTH_DAYS,tasks:TASKS};
+  CURRENT_MONTH=months[newIdx];
+  applyData(ALL_MONTHS[String(CURRENT_MONTH)]);
+  setDirty(false);
+  // 重置日期筛选为今天
+  document.querySelectorAll('.df-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.df-btn')[1].classList.add('active');
+}
+
 function updateKPI(){
   const r=getEffectiveRange();
   let done=0,undone=0,na=0,unfilled=0;
