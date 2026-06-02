@@ -501,15 +501,13 @@ function updateDcEl(el,s,day){
 function updateCatProgress(catKey){
   const tasks=TASKS.filter(t=>t.cat===catKey);
   const r=getEffectiveRange();
-  let done=0,na=0,undone=0;
-  tasks.forEach(t=>{for(let i=r.from-1;i<r.to;i++){const s=t.days[i]??0;if(s===1)done++;else if(s===3)na++;else if(s===2)undone++;}});
+  let done=0,na=0;
+  tasks.forEach(t=>{for(let i=r.from-1;i<r.to;i++){const s=t.days[i]??0;if(s===1)done++;else if(s===3)na++;}});
   const pct=tasks.length>0?Math.round((done+na)/tasks.length*100):100;
-  const undonePct=tasks.length>0?Math.round(undone/tasks.length*100):0;
-  const color=getCatColor(catKey);
   const sec=document.querySelector(`.cat-section[data-cat="${catKey}"]`);
   if(!sec)return;
   sec.querySelector('.cat-progress-fill').style.width=pct+'%';
-  sec.querySelector('.cat-pct').innerHTML=`<span>未完成 <strong style="color:#dc2626">${undone}</strong>/<span style="color:var(--text2)">${tasks.length}</span>&nbsp;<strong style="color:#dc2626">${undonePct}%</strong></span><span style="font-size:11px;color:var(--text3)">完成 ${done+na}/${tasks.length} <strong style="color:${color}">${pct}%</strong></span>`;
+  sec.querySelector('.cat-pct').innerHTML=`${done+na}/${tasks.length}&nbsp;<strong style="color:${getCatColor(catKey)}">${pct}%</strong>`;
 }
 
 // ── HELPERS ──
@@ -605,16 +603,15 @@ function renderCalendar(){
     const tasks=filtered.filter(t=>t.cat===catKey);
     if(!tasks.length)return;
     const color=getCatColor(catKey);
-    let done=0,na=0,undone=0;
-    tasks.forEach(t=>{for(let i=r.from-1;i<r.to;i++){const s=t.days[i]??0;if(s===1)done++;else if(s===3)na++;else if(s===2)undone++;}});
+    let done=0,na=0;
+    tasks.forEach(t=>{for(let i=r.from-1;i<r.to;i++){const s=t.days[i]??0;if(s===1)done++;else if(s===3)na++;}});
     const pct=tasks.length>0?Math.round((done+na)/tasks.length*100):100;
-    const undonePct=tasks.length>0?Math.round(undone/tasks.length*100):0;
     html+=`<div class="cat-section" data-cat="${catKey}">
       <div class="cat-header" style="border-left-color:${color}">
         <span class="cat-badge" style="background:${color}">${catKey}</span>
         <span class="cat-title">类任务 · ${tasks.length}项</span>
         <div class="cat-progress-wrap"><div class="cat-progress-fill" style="width:${pct}%;background:${color}"></div></div>
-        <span class="cat-pct" style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;min-width:110px;"><span>未完成 <strong style="color:#dc2626">${undone}</strong>/<span style="color:var(--text2)">${tasks.length}</span>&nbsp;<strong style="color:#dc2626">${undonePct}%</strong></span><span style="font-size:11px;color:var(--text3)">完成 ${done+na}/${tasks.length} <strong style="color:${color}">${pct}%</strong></span></span>
+        <span class="cat-pct">${done+na}/${tasks.length}&nbsp;<strong style="color:${color}">${pct}%</strong></span>
       </div>`;
     tasks.forEach(t=>{
       const ti=TASKS.indexOf(t);
