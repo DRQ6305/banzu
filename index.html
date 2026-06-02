@@ -340,15 +340,6 @@ const GH_FILE   = 'data.json';
 const GH_BRANCH = 'main';
 const TOKEN_KEY = 'banzu_gh_token';
 
-// 飞书配置
-const FS_APP_ID     = 'cli_aa841596037ddbed';
-const FS_APP_SECRET = 'TW3XyDjWWKJH8OE0QEE1rh3tZEYMCgPl';
-const FS_SHEET_TOKEN= 'N5HLs90J6hzo2StPQFWcb6Plnid';
-const FS_SHEET_ID   = 'a18a5d';
-// 任务行偏移：第1条任务在表格第3行(index=0 → row=3)
-// 日期列偏移：第1天在E列(index=0 → col=5，A=1)
-const FS_ROW_OFFSET = 3;
-const FS_COL_OFFSET = 5;
 
 const CATS=[{key:'人',color:'#2563eb'},{key:'机',color:'#ea580c'},{key:'料',color:'#7c3aed'},{key:'法',color:'#16a34a'},{key:'安全',color:'#dc2626'},{key:'其他',color:'#64748b'}];
 const FREQ_CLASS={天:'ft',周:'fw',月:'fm',按需:'fn'};
@@ -423,16 +414,9 @@ async function saveData(){
     const data=await res.json();
     ghFileSha=data.content.sha;
     setDirty(false);
-    btn.classList.remove('saving'); txt.textContent='🔄 同步飞书…';
-    // 同步到飞书表格
-    const fsOk=await syncToFeishu();
-    if(fsOk){
-      txt.textContent='✅ 已保存';
-      showToast('保存成功，已同步飞书表格！','success');
-    }else{
-      txt.textContent='✅ 已保存';
-      showToast('已保存到GitHub，飞书同步失败','error');
-    }
+    btn.classList.remove('saving');
+    txt.textContent='✅ 已保存';
+    showToast('保存成功！数据将在30分钟内同步到飞书表格','success');
     setTimeout(()=>{txt.textContent='💾 保存';},2500);
   }catch(e){
     btn.classList.remove('saving'); btn.classList.add('error'); txt.textContent='❌ 失败';
@@ -447,64 +431,8 @@ function setDirty(val){
   val?btn.classList.add('dirty'):btn.classList.remove('dirty');
 }
 
-// ── 飞书同步 ──
-let fsToken=''; let fsTokenExpire=0;
-
-async function getFsToken(){
-  if(fsToken && Date.now()<fsTokenExpire) return fsToken;
-  const res=await fetch('https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({app_id:FS_APP_ID,app_secret:FS_APP_SECRET})
-  });
-  const data=await res.json();
-  if(data.code!==0) throw new Error('飞书Token获取失败:'+data.msg);
-  fsToken=data.tenant_access_token;
-  fsTokenExpire=Date.now()+(data.expire-60)*1000;
-  return fsToken;
-}
 
 // 列号转A1表示法（1=A, 2=B, ... 26=Z, 27=AA ...）
-function colToLetter(n){
-  let s='';
-  while(n>0){s=String.fromCharCode(64+(n%26||26))+s;n=Math.floor((n-1)/26);}
-  return s;
-}
-
-async function syncToFeishu(){
-  try{
-    const token=await getFsToken();
-    // 构建 valueRanges 批量写入
-    // 每条任务对应一行，一次性写入所有任务的所有天数据
-    const valueRanges=[];
-    TASKS.forEach((t,ti)=>{
-      const row=ti+FS_ROW_OFFSET;  // 表格行号（1-based）
-      const values=[];
-      for(let di=0;di<MONTH_DAYS;di++){
-        const s=t.days[di]??0;
-        values.push(s===0?null:s);  // 0(未填写)写null清空，1/2/3写数字
-      }
-      const startCol=colToLetter(FS_COL_OFFSET);
-      const endCol=colToLetter(FS_COL_OFFSET+MONTH_DAYS-1);
-      valueRanges.push({
-        range:`${FS_SHEET_ID}!${startCol}${row}:${endCol}${row}`,
-        values:[values]
-      });
-    });
-    const res=await fetch(`https://open.feishu.cn/open-apis/sheets/v2/spreadsheets/${FS_SHEET_TOKEN}/values_batch_update`,{
-      method:'POST',
-      headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
-      body:JSON.stringify({valueRanges})
-    });
-    const data=await res.json();
-    if(data.code!==0) throw new Error(data.msg||'写入失败');
-    return true;
-  }catch(e){
-    console.error('飞书同步失败:',e);
-    showToast('飞书同步失败：'+e.message,'error');
-    return false;
-  }
-}
 
 // ── TOGGLE ──
 function toggleDay(ti,di){
