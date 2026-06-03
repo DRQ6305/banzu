@@ -355,7 +355,7 @@ body{font-family:'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;backgroun
   <div class="sidebar">
     <div class="sidebar-section">班组</div>
     <div id="groupList">
-      <div class="sidebar-item" onclick="filterGroup('侧围外板',this)"><div class="sidebar-dot" style="background:#16a34a"></div>侧围外板</div>
+      <div class="sidebar-item active" onclick="filterGroup('侧围外板',this)"><div class="sidebar-dot" style="background:#16a34a"></div>侧围外板</div>
       <div class="sidebar-item" onclick="filterGroup('侧围内板',this)"><div class="sidebar-dot" style="background:#d97706"></div>侧围内板</div>
       <div class="sidebar-item" onclick="filterGroup('主线',this)"><div class="sidebar-dot" style="background:#7c3aed"></div>主线</div>
     </div>
@@ -436,7 +436,7 @@ const FREQ_CLASS={天:'ft',周:'fw',月:'fm',按需:'fn'};
 
 let TASKS=[],TODAY=1,MONTH_DAYS=30,YEAR=2026,MONTH=6;
 let ALL_MONTHS={},CURRENT_MONTH=6;
-let filterRange=null,activeSidebarCat='',activeGroup='',isDirty=false,ghFileSha='';
+let filterRange=null,activeSidebarCat='',activeGroup='侧围外板',isDirty=false,ghFileSha='';
 
 // ── TOKEN ──
 function getToken(){ return _TK; }
