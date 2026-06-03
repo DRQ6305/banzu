@@ -601,7 +601,7 @@ function updateCatProgress(catKey){
   const row=document.querySelector(`.cal-cat-row[data-cat="${catKey}"]`);
   if(!row)return;
   row.querySelector('.cat-progress-fill').style.width=pct+'%';
-  row.querySelector('.cat-pct').innerHTML=`${done+na}/${tasks.length}&nbsp;<strong style="color:${getCatColor(catKey)}">${pct}%</strong>`;
+  row.querySelector('.cat-pct').innerHTML=`${done+na}/${tasks.length*(r.to-r.from+1)}&nbsp;<strong style="color:${getCatColor(catKey)}">${pct}%</strong>`;
 }
 function toggleCatCollapse(catKey){
   const rows=document.querySelectorAll(`.cal-task-row[data-cat="${catKey}"]`);
