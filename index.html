@@ -580,7 +580,7 @@ function toggleCatCollapse(catKey){
 function getCatColor(cat){const c=CATS.find(x=>x.key===cat);return c?c.color:'#64748b';}
 function getFreqClass(freq){return FREQ_CLASS[freq]||'fo';}
 function statusLabel(s){return['未填写','已完成','未完成','不涉及'][s];}
-function getEffectiveRange(){return filterRange||{from:1,to:TODAY};}
+function getEffectiveRange(){return filterRange||{from:1,to:MONTH_DAYS};}
 // ── MONTH SWITCH ──
 function switchMonth(dir){
   const months=Object.keys(ALL_MONTHS).map(Number).sort((a,b)=>a-b);
