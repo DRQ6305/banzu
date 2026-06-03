@@ -865,7 +865,7 @@ function switchPanel(name,btn){
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('panel-'+name).classList.add('active');
   btn.classList.add('active');
-  if(name==='stats') renderStats();
+  if(name==='stats'){filterRange=null;document.querySelectorAll('.gf-btn').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.gf-btn')[0].classList.add('active');updateGfLabel();renderStats();}
 }
 function scrollToToday(){const el=document.querySelector('.today-ring');if(el)el.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});}
 
