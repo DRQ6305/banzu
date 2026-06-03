@@ -393,12 +393,12 @@ body{font-family:'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;backgroun
 
 
     <div class="panel" id="panel-stats">
-      <div class="stats-grid">
-        <div class="chart-card"><div class="chart-card-title">完成状态占比</div><div id="chartPie" style="height:260px"></div></div>
+      <div class="stats-grid full">
+        <div class="chart-card"><div class="chart-card-title">每日完成趋势</div><div id="chartTrend" style="height:320px"></div></div>
       </div>
       <div class="stats-grid">
-        <div class="chart-card"><div class="chart-card-title">每日完成趋势</div><div id="chartTrend" style="height:240px"></div></div>
-        <div class="chart-card"><div class="chart-card-title">各类别任务数</div><div id="chartBar" style="height:240px"></div></div>
+        <div class="chart-card"><div class="chart-card-title">完成状态占比</div><div id="chartPie" style="height:260px"></div></div>
+        <div class="chart-card"><div class="chart-card-title">各类别任务数</div><div id="chartBar" style="height:260px"></div></div>
       </div>
     </div>
 
@@ -837,7 +837,7 @@ function renderChartTrend(){
     TASKS.forEach(t=>{const s=t.days[di];if(s===1)d++;else if(s===2)u++;else if(s===3)n++;});t=TASKS.length;
     return{d,u,n,t,label:r.from+i+'日'};
   });
-  chart.setOption({...EC,grid:{left:10,right:10,top:24,bottom:8,containLabel:true},xAxis:{type:'category',data:days.map(d=>d.label),axisLabel:{color:'#94a3b8',fontSize:11},axisLine:{lineStyle:{color:'#e2e8f0'}},axisTick:{show:false}},yAxis:[{type:'value',axisLabel:{color:'#94a3b8',fontSize:11},splitLine:{lineStyle:{color:'#f1f5f9'}},axisLine:{show:false}},{type:'value',min:0,max:TASKS.length+2,axisLabel:{show:false},splitLine:{show:false},axisLine:{show:false},axisTick:{show:false}}],tooltip:{trigger:'axis'},legend:{top:0,textStyle:{color:'#475569'},itemWidth:10,itemHeight:4},series:[{name:'已完成',type:'bar',stack:'s',data:days.map(d=>d.d),itemStyle:{color:'#86efac',borderRadius:[2,2,0,0]},label:{show:true,position:'inside',formatter:p=>p.value>0?p.value:'',fontSize:10,color:'#fff'}},{name:'未完成',type:'bar',stack:'s',data:days.map(d=>d.u),itemStyle:{color:'#fca5a5',borderRadius:[2,2,0,0]},label:{show:true,position:'inside',formatter:p=>p.value>0?p.value:'',fontSize:10,color:'#fff'}},{name:'不涉及',type:'bar',stack:'s',data:days.map(d=>d.n),itemStyle:{color:'#cbd5e1',borderRadius:[2,2,0,0]},label:{show:true,position:'inside',formatter:p=>p.value>0?p.value:'',fontSize:10,color:'#64748b'}},{name:'任务总数',type:'line',yAxisIndex:1,data:days.map(d=>d.t),smooth:true,symbol:'circle',symbolSize:5,lineStyle:{color:'#f59e0b',width:2},itemStyle:{color:'#f59e0b'},label:{show:true,position:'top',formatter:p=>p.value,fontSize:10,color:'#92400e'}}]});
+  chart.setOption({...EC,grid:{left:10,right:10,top:8,bottom:36,containLabel:true},xAxis:{type:'category',data:days.map(d=>d.label),axisLabel:{color:'#94a3b8',fontSize:11},axisLine:{lineStyle:{color:'#e2e8f0'}},axisTick:{show:false}},yAxis:[{type:'value',axisLabel:{color:'#94a3b8',fontSize:11},splitLine:{lineStyle:{color:'#f1f5f9'}},axisLine:{show:false}},{type:'value',min:0,max:TASKS.length+2,axisLabel:{show:false},splitLine:{show:false},axisLine:{show:false},axisTick:{show:false}}],tooltip:{trigger:'axis'},legend:{bottom:0,textStyle:{color:'#475569'},itemWidth:10,itemHeight:4},series:[{name:'已完成',type:'bar',stack:'s',data:days.map(d=>d.d),itemStyle:{color:'#86efac',borderRadius:[2,2,0,0]},label:{show:true,position:'inside',formatter:p=>p.value>0?p.value:'',fontSize:10,color:'#fff'}},{name:'未完成',type:'bar',stack:'s',data:days.map(d=>d.u),itemStyle:{color:'#fca5a5',borderRadius:[2,2,0,0]},label:{show:true,position:'inside',formatter:p=>p.value>0?p.value:'',fontSize:10,color:'#fff'}},{name:'不涉及',type:'bar',stack:'s',data:days.map(d=>d.n),itemStyle:{color:'#cbd5e1',borderRadius:[2,2,0,0]},label:{show:true,position:'inside',formatter:p=>p.value>0?p.value:'',fontSize:10,color:'#64748b'}},{name:'任务总数',type:'line',yAxisIndex:1,data:days.map(d=>d.t),smooth:true,symbol:'circle',symbolSize:5,lineStyle:{color:'#f59e0b',width:2},itemStyle:{color:'#f59e0b'},label:{show:true,position:'top',formatter:p=>p.value,fontSize:10,color:'#92400e'}}]});
 }
 function renderChartBar(){
   const chart=initChart('chartBar');
