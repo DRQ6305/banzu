@@ -399,7 +399,6 @@ body{font-family:'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;backgroun
       </div>
       <div class="stats-grid">
         <div class="chart-card"><div class="chart-card-title">每日完成趋势</div><div id="chartTrend" style="height:240px"></div></div>
-        <div class="chart-card"><div class="chart-card-title">任务频次分布</div><div id="chartFreq" style="height:240px"></div></div>
       </div>
       <div class="stats-grid full">
         <div class="chart-card"><div class="chart-card-title">各类别任务数</div><div id="chartBar" style="height:200px"></div></div>
@@ -822,7 +821,7 @@ function initChart(id){
 function renderStats(){
   setTimeout(()=>{
     try{renderChartCat();}catch(e){}try{renderChartPie();}catch(e){}
-    try{renderChartTrend();}catch(e){}try{renderChartFreq();}catch(e){}try{renderChartBar();}catch(e){}
+    try{renderChartTrend();}catch(e){}try{renderChartBar();}catch(e){}
   },80);
 }
 const EC={backgroundColor:'transparent',textStyle:{color:'#475569',fontFamily:'PingFang SC,Microsoft YaHei,sans-serif'}};
@@ -853,13 +852,6 @@ function renderChartTrend(){
     return{d,u,label:r.from+i+'日'};
   });
   chart.setOption({...EC,grid:{left:10,right:10,top:24,bottom:8,containLabel:true},xAxis:{type:'category',data:days.map(d=>d.label),axisLabel:{color:'#94a3b8',fontSize:11},axisLine:{lineStyle:{color:'#e2e8f0'}},axisTick:{show:false}},yAxis:{type:'value',axisLabel:{color:'#94a3b8',fontSize:11},splitLine:{lineStyle:{color:'#f1f5f9'}},axisLine:{show:false}},tooltip:{trigger:'axis'},legend:{top:0,textStyle:{color:'#475569'},itemWidth:10,itemHeight:4},series:[{name:'已完成',type:'bar',stack:'s',data:days.map(d=>d.d),itemStyle:{color:'#86efac',borderRadius:[2,2,0,0]}},{name:'未完成',type:'bar',stack:'s',data:days.map(d=>d.u),itemStyle:{color:'#fca5a5',borderRadius:[2,2,0,0]}}]});
-}
-function renderChartFreq(){
-  const chart=initChart('chartFreq');
-  const freqMap={};TASKS.forEach(t=>{freqMap[t.freq]=(freqMap[t.freq]||0)+1;});
-  const entries=Object.entries(freqMap).sort((a,b)=>b[1]-a[1]);
-  const colors=['#3b82f6','#7c3aed','#16a34a','#d97706','#dc2626','#64748b'];
-  chart.setOption({...EC,tooltip:{formatter:'{b}: {c}项'},series:[{type:'pie',radius:['32%','62%'],center:['50%','48%'],itemStyle:{borderColor:'#fff',borderWidth:2},label:{color:'#475569',fontSize:11},data:entries.map(([k,v],i)=>({name:k,value:v,itemStyle:{color:colors[i%colors.length]}}))}]});
 }
 function renderChartBar(){
   const chart=initChart('chartBar');
