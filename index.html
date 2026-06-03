@@ -591,7 +591,7 @@ function switchMonth(dir){
   CURRENT_MONTH=months[newIdx];
   applyData(ALL_MONTHS[String(CURRENT_MONTH)]);
   setDirty(false);
-  if(document.querySelector('.panel.active')?.id==='panel-stats') renderStats();
+  if(document.querySelector('.panel.active')?.id==='panel-stats'){filterRange=null;document.querySelectorAll('.gf-btn').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.gf-btn')[0].classList.add('active');updateGfLabel();renderStats();}
   // 重置日期筛选为今天
   document.querySelectorAll('.df-btn').forEach(b=>b.classList.remove('active'));
   document.querySelectorAll('.df-btn')[1].classList.add('active');
