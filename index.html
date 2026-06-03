@@ -561,7 +561,7 @@ function updateCatProgress(catKey){
   const r=getEffectiveRange();
   let done=0,na=0;
   tasks.forEach(t=>{for(let i=r.from-1;i<r.to;i++){const s=t.days[i]??0;if(s===1)done++;else if(s===3)na++;}});
-  const pct=tasks.length>0?Math.round((done+na)/tasks.length*100):100;
+  const pct=tasks.length>0?Math.round((done+na)/(tasks.length*(r.to-r.from+1))*100):100;
   const row=document.querySelector(`.cal-cat-row[data-cat="${catKey}"]`);
   if(!row)return;
   row.querySelector('.cat-progress-fill').style.width=pct+'%';
@@ -845,11 +845,11 @@ function renderChartTrend(){
   const chart=initChart('chartTrend');
   const r=getStatsRange();
   const days=Array.from({length:r.to-r.from+1},(_,i)=>{
-    const di=r.from-1+i;let d=0,u=0;
-    TASKS.forEach(t=>{const s=t.days[di];if(s===1)d++;else if(s===2)u++;});
-    return{d,u,label:r.from+i+'日'};
+    const di=r.from-1+i;let d=0,u=0,n=0;
+    TASKS.forEach(t=>{const s=t.days[di];if(s===1)d++;else if(s===2)u++;else if(s===3)n++;});
+    return{d,u,n,label:r.from+i+'日'};
   });
-  chart.setOption({...EC,grid:{left:10,right:10,top:24,bottom:8,containLabel:true},xAxis:{type:'category',data:days.map(d=>d.label),axisLabel:{color:'#94a3b8',fontSize:11},axisLine:{lineStyle:{color:'#e2e8f0'}},axisTick:{show:false}},yAxis:{type:'value',axisLabel:{color:'#94a3b8',fontSize:11},splitLine:{lineStyle:{color:'#f1f5f9'}},axisLine:{show:false}},tooltip:{trigger:'axis'},legend:{top:0,textStyle:{color:'#475569'},itemWidth:10,itemHeight:4},series:[{name:'已完成',type:'bar',stack:'s',data:days.map(d=>d.d),itemStyle:{color:'#86efac',borderRadius:[2,2,0,0]}},{name:'未完成',type:'bar',stack:'s',data:days.map(d=>d.u),itemStyle:{color:'#fca5a5',borderRadius:[2,2,0,0]}}]});
+  chart.setOption({...EC,grid:{left:10,right:10,top:24,bottom:8,containLabel:true},xAxis:{type:'category',data:days.map(d=>d.label),axisLabel:{color:'#94a3b8',fontSize:11},axisLine:{lineStyle:{color:'#e2e8f0'}},axisTick:{show:false}},yAxis:{type:'value',axisLabel:{color:'#94a3b8',fontSize:11},splitLine:{lineStyle:{color:'#f1f5f9'}},axisLine:{show:false}},tooltip:{trigger:'axis'},legend:{top:0,textStyle:{color:'#475569'},itemWidth:10,itemHeight:4},series:[{name:'已完成',type:'bar',stack:'s',data:days.map(d=>d.d),itemStyle:{color:'#86efac',borderRadius:[2,2,0,0]},label:{show:true,position:'inside',formatter:p=>p.value>0?p.value:'',fontSize:10,color:'#fff'}},{name:'未完成',type:'bar',stack:'s',data:days.map(d=>d.u),itemStyle:{color:'#fca5a5',borderRadius:[2,2,0,0]},label:{show:true,position:'inside',formatter:p=>p.value>0?p.value:'',fontSize:10,color:'#fff'}},{name:'不涉及',type:'bar',stack:'s',data:days.map(d=>d.n),itemStyle:{color:'#cbd5e1',borderRadius:[2,2,0,0]},label:{show:true,position:'inside',formatter:p=>p.value>0?p.value:'',fontSize:10,color:'#64748b'}}]});
 }
 function renderChartBar(){
   const chart=initChart('chartBar');
