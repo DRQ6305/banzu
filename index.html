@@ -602,7 +602,8 @@ function switchMonth(dir){
 function updateKPI(){
   const r=getEffectiveRange();
   let done=0,undone=0,na=0,unfilled=0;
-  TASKS.forEach(t=>{for(let i=r.from-1;i<r.to;i++){const s=t.days[i]??0;if(s===1)done++;else if(s===2)undone++;else if(s===3)na++;else unfilled++;}});
+  const kpiTasks=TASKS.filter(t=>(activeSidebarCat===''||t.cat===activeSidebarCat)&&(activeGroup===''||(t.group||'侧围外板')===activeGroup));
+  kpiTasks.forEach(t=>{for(let i=r.from-1;i<r.to;i++){const s=t.days[i]??0;if(s===1)done++;else if(s===2)undone++;else if(s===3)na++;else unfilled++;}});
   const total=done+undone+na+unfilled;
   // 完成率 = (已完成次数 + 不涉及次数) / 任务总数
   const rate=total>0?Math.round((done+na)/total*100)+'%':'—';
