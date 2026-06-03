@@ -898,7 +898,16 @@ function submitAddTask(){
   const linkUrl=document.getElementById('atLinkUrl').value.trim();
   const linkText=document.getElementById('atLinkText').value.trim();
   const days=Array(MONTH_DAYS).fill(0);
-  TASKS.push({group,name,cat,freq,days,linkUrl,linkText});
+  const newTask={group,name,cat,freq,days,linkUrl,linkText};
+  TASKS.push(newTask);
+  // 同步到后续月份
+  Object.keys(ALL_MONTHS).forEach(mk=>{
+    if(Number(mk)>CURRENT_MONTH){
+      const md=ALL_MONTHS[mk];
+      const exists=md.tasks.some(t=>t.name===name&&t.group===group);
+      if(!exists) md.tasks.push({group,name,cat,freq,linkUrl,linkText,days:Array(md.month_days||30).fill(0)});
+    }
+  });
   setDirty(true);
   renderSidebar();
   renderCalendar();
