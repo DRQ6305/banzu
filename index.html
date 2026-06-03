@@ -83,7 +83,13 @@ body{font-family:'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;backgroun
 .layout{display:flex;height:calc(100vh - 60px - 66px);}
 
 /* SIDEBAR */
-.sidebar{width:210px;background:#fff;border-right:1px solid var(--border);overflow-y:auto;flex-shrink:0;padding:10px 0;}
+.sidebar{width:210px;background:#fff;border-right:1px solid var(--border);overflow-y:auto;flex-shrink:0;padding:10px 0;transition:width .2s;position:relative;}
+.sidebar.collapsed{width:0;overflow:hidden;border-right:none;padding:0;}
+.sidebar-toggle{position:absolute;top:10px;right:8px;width:22px;height:22px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;color:var(--text3);z-index:10;}
+.sidebar-toggle:hover{background:var(--bg4);color:var(--text);}
+.sidebar-show-btn{display:none;position:fixed;left:0;top:50%;transform:translateY(-50%);width:18px;height:48px;background:#fff;border:1px solid var(--border);border-left:none;border-radius:0 8px 8px 0;cursor:pointer;font-size:12px;color:var(--text3);z-index:100;align-items:center;justify-content:center;box-shadow:2px 0 8px rgba(0,0,0,.06);}
+.sidebar-show-btn:hover{color:var(--text);}
+.sidebar.collapsed~* .sidebar-show-btn{display:flex;}
 .sidebar::-webkit-scrollbar{width:3px;}
 .sidebar::-webkit-scrollbar-thumb{background:var(--bg5);border-radius:2px;}
 .sidebar-section{padding:12px 18px 6px;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1.2px;}
@@ -379,7 +385,8 @@ body{font-family:'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;backgroun
 
 <!-- LAYOUT -->
 <div class="layout">
-  <div class="sidebar">
+  <div class="sidebar" id="mainSidebar">
+    <button class="sidebar-toggle" onclick="toggleSidebar()" title="收起侧边栏">‹</button>
     <div class="sidebar-section">班组</div>
     <div id="groupList">
       <div class="sidebar-item active" onclick="filterGroup('侧围外板',this)"><div class="sidebar-dot" style="background:#16a34a"></div>侧围外板</div>
@@ -387,6 +394,7 @@ body{font-family:'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;backgroun
       <div class="sidebar-item" onclick="filterGroup('主线',this)"><div class="sidebar-dot" style="background:#7c3aed"></div>主线</div>
     </div>
   </div>
+  <button class="sidebar-show-btn" id="sidebarShowBtn" onclick="toggleSidebar()" title="展开侧边栏">›</button>
   <div class="main" id="mainScroll">
 
     <div class="panel active" id="panel-calendar">
@@ -688,6 +696,11 @@ function filterCatSidebar(cat,el){
   renderCalendar();
 }
 
+function toggleSidebar(){
+  const sb=document.getElementById('mainSidebar');
+  const collapsed=sb.classList.toggle('collapsed');
+  document.getElementById('sidebarShowBtn').style.display=collapsed?'flex':'none';
+}
 function filterGroup(key,btn){
   activeGroup=key;
   document.querySelectorAll('#groupList .sidebar-item').forEach(i=>i.classList.remove('active'));
