@@ -593,7 +593,7 @@ function updateDcEl(el,s,day){
   el.title=day+'日 · '+['未填写','已完成','未完成','不涉及'][s];
 }
 function updateCatProgress(catKey){
-  const tasks=TASKS.filter(t=>t.cat===catKey);
+  const tasks=TASKS.filter(t=>t.cat===catKey&&(activeGroup===''||t.group===activeGroup));
   const r=getEffectiveRange();
   let done=0,na=0;
   tasks.forEach(t=>{for(let i=r.from-1;i<r.to;i++){const s=t.days[i]??0;if(s===1)done++;else if(s===3)na++;}});
