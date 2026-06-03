@@ -273,9 +273,10 @@ body{font-family:'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;backgroun
     <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:3px">链接文字</div>
     <input class="modal-input" id="etLinkText" type="text" maxlength="20" style="margin-bottom:10px">
     <input type="hidden" id="etIdx">
-    <div style="display:flex;gap:8px">
+    <div style="display:flex;gap:6px">
       <button class="modal-btn" style="flex:1;background:var(--bg3);color:var(--text2);border:1px solid var(--border2);padding:7px 0;font-size:12px" onclick="closeEditTaskModal()">取消</button>
       <button class="modal-btn" style="flex:1;padding:7px 0;font-size:12px" onclick="submitEditTask()">确认</button>
+      <button class="modal-btn" style="flex:1;background:#fef2f2;color:#dc2626;border:1px solid #fecaca;padding:7px 0;font-size:12px" onclick="deleteEditTask()">删除</button>
     </div>
   </div>
 </div>
@@ -838,6 +839,15 @@ function _etOutside(e){if(!document.getElementById('editTaskModal').contains(e.t
 function closeEditTaskModal(){
   document.getElementById('editTaskModal').style.display='none';
   document.removeEventListener('mousedown',_etOutside);
+}
+function deleteEditTask(){
+  const idx=parseInt(document.getElementById('etIdx').value);
+  if(!confirm('确认删除该任务？此操作不可撤销。')) return;
+  TASKS.splice(idx,1);
+  setDirty(true);
+  closeEditTaskModal();
+  renderCalendar(); updateKPI();
+  showToast('任务已删除');
 }
 function submitEditTask(){
   const idx=parseInt(document.getElementById('etIdx').value);
