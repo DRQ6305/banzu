@@ -123,6 +123,9 @@ body{font-family:'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;backgroun
 .df-apply:hover{background:#1d4ed8;}
 .legend-row{display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin-left:auto;}
 .legend-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);}
+.legend-filter{cursor:pointer;padding:3px 8px;border-radius:6px;border:1px solid transparent;transition:all .15s;}
+.legend-filter:hover{background:var(--bg4);border-color:var(--border);}
+.legend-filter.lf-active{background:var(--bg4);border-color:var(--border2);font-weight:600;color:var(--text);}
 .legend-dot{width:12px;height:12px;border-radius:3px;}
 .edit-hint{font-size:11px;color:var(--text3);background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:3px 10px;}
 
@@ -417,10 +420,10 @@ body{font-family:'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;backgroun
         <span class="df-label">分类：</span>
         <div id="catFilterBar" style="display:flex;gap:4px;flex-wrap:wrap;"></div>
         <div class="legend-row">
-          <div class="legend-item"><div class="legend-dot" style="background:var(--green-cell);border:1px solid #86efac"></div>已完成</div>
-          <div class="legend-item"><div class="legend-dot" style="background:var(--red-cell);border:1px solid #fca5a5"></div>未完成</div>
-          <div class="legend-item"><div class="legend-dot" style="background:var(--bg4)"></div>不涉及</div>
-          <div class="legend-item"><div class="legend-dot" style="background:#fff;border:1px dashed var(--border2)"></div>未填写</div>
+          <div class="legend-item legend-filter" id="lf1" onclick="setStatusFilter(1)"><div class="legend-dot" style="background:var(--green-cell);border:1px solid #86efac"></div>已完成</div>
+          <div class="legend-item legend-filter" id="lf2" onclick="setStatusFilter(2)"><div class="legend-dot" style="background:var(--red-cell);border:1px solid #fca5a5"></div>未完成</div>
+          <div class="legend-item legend-filter" id="lf3" onclick="setStatusFilter(3)"><div class="legend-dot" style="background:var(--bg4)"></div>不涉及</div>
+          <div class="legend-item legend-filter" id="lf0" onclick="setStatusFilter(0)"><div class="legend-dot" style="background:#fff;border:1px dashed var(--border2)"></div>未填写</div>
           <div class="legend-item"><div class="legend-dot" style="outline:2px solid var(--orange);outline-offset:1px;background:#fff"></div>今天</div>
           <button class="add-task-btn" onclick="openAddTaskModal()">+ 添加任务</button>
         </div>
@@ -472,6 +475,7 @@ const FREQ_CLASS={天:'ft',周:'fw',月:'fm',按需:'fn'};
 let TASKS=[],TODAY=1,SHIFT_TODAY=1,MONTH_DAYS=30,YEAR=2026,MONTH=6;
 let ALL_MONTHS={},CURRENT_MONTH=6;
 let filterRange=null,activeSidebarCat='',activeGroup='侧围外板',isDirty=false,ghFileSha='';
+let statusFilter=null;
 
 // ── TOKEN ──
 function getToken(){ return _TK; }
@@ -711,6 +715,11 @@ function filterGroup(key,btn){
 }
 
 // ── CALENDAR ──
+function setStatusFilter(val){
+  statusFilter=(statusFilter===val)?null:val;
+  [0,1,2,3].forEach(v=>{const el=document.getElementById('lf'+v);if(el)el.classList.toggle('lf-active',statusFilter===v);});
+  renderCalendar();
+}
 function renderCalendar(){
   const view=document.getElementById('calendarView');
   const filtered=TASKS.filter(t=>(activeSidebarCat===''||t.cat===activeSidebarCat)&&(activeGroup===''||t.group===activeGroup));
@@ -743,6 +752,7 @@ function renderCalendar(){
         </div>
       </td></tr>`;
     tasks.forEach(t=>{
+      if(statusFilter!==null){const r2=getEffectiveRange();const has=t.days.slice(r2.from-1,r2.to).some(s=>(s??0)===statusFilter);if(!has)return;}
       const ti=TASKS.indexOf(t);
       const fc=getFreqClass(t.freq);
       const linkHtml=t.linkUrl?`<a class="link-pill" href="${t.linkUrl}" target="_blank">🔗 ${t.linkText||'查看'}</a>`:`<span style="color:var(--text3);font-size:12px">—</span>`;
