@@ -808,7 +808,7 @@ function submitAddTask(){
   const linkUrl=document.getElementById('atLinkUrl').value.trim();
   const linkText=document.getElementById('atLinkText').value.trim();
   const days=Array(MONTH_DAYS).fill(0);
-  TASKS.push({name,cat,freq,days,linkUrl,linkText});
+  TASKS.push({group:activeGroup||'侧围外板',name,cat,freq,days,linkUrl,linkText});
   setDirty(true);
   renderSidebar();
   renderCalendar();
