@@ -264,19 +264,18 @@ body{font-family:'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;backgroun
 </div>
 
 <!-- ADD TASK MODAL -->
-<div id="editTaskModal" style="display:none" onclick="if(event.target===this)closeEditTaskModal()">
-  <div class="modal-box" style="width:460px">
-    <div class="modal-title">修改任务</div>
-    <label style="font-size:12px;font-weight:600;color:var(--text2);display:block;margin-bottom:4px">任务名称 <span style="color:var(--red)">*</span></label>
-    <input class="modal-input" id="etName" type="text" maxlength="40">
-    <label style="font-size:12px;font-weight:600;color:var(--text2);display:block;margin-bottom:4px">链接地址（可选）</label>
-    <input class="modal-input" id="etLinkUrl" type="url" placeholder="https://...">
-    <label style="font-size:12px;font-weight:600;color:var(--text2);display:block;margin-bottom:4px">链接文字（可选）</label>
-    <input class="modal-input" id="etLinkText" type="text" maxlength="20">
+<div id="editTaskModal" style="display:none;position:fixed;z-index:2000">
+  <div style="background:#fff;border-radius:12px;padding:16px 18px;width:300px;box-shadow:0 8px 32px rgba(0,0,0,.18);border:1px solid var(--border)">
+    <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:3px">任务名称</div>
+    <input class="modal-input" id="etName" type="text" maxlength="40" style="margin-bottom:8px">
+    <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:3px">链接地址</div>
+    <input class="modal-input" id="etLinkUrl" type="url" placeholder="https://..." style="margin-bottom:8px">
+    <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:3px">链接文字</div>
+    <input class="modal-input" id="etLinkText" type="text" maxlength="20" style="margin-bottom:10px">
     <input type="hidden" id="etIdx">
-    <div style="display:flex;gap:8px;margin-top:4px">
-      <button class="modal-btn" style="background:var(--bg3);color:var(--text2);border:1px solid var(--border2)" onclick="closeEditTaskModal()">取消</button>
-      <button class="modal-btn" onclick="submitEditTask()">确认修改</button>
+    <div style="display:flex;gap:8px">
+      <button class="modal-btn" style="flex:1;background:var(--bg3);color:var(--text2);border:1px solid var(--border2);padding:7px 0;font-size:12px" onclick="closeEditTaskModal()">取消</button>
+      <button class="modal-btn" style="flex:1;padding:7px 0;font-size:12px" onclick="submitEditTask()">确认</button>
     </div>
   </div>
 </div>
@@ -738,7 +737,7 @@ function renderCalendar(){
         dayCells+=`<td class="cal-dc-cell"><div class="dc s${s}${day===TODAY?' today-ring':''}${inRange?'':' dimmed'}" data-ti="${ti}" data-di="${i}" title="${day}日·${statusLabel(s)}" onclick="toggleDay(${ti},${i})">${day}</div></td>`;
       }
       tbody+=`<tr class="cal-task-row" data-cat="${catKey}">
-        <td class="cal-td-name sc1"><span class="task-name">${t.name}</span><button class="edit-task-btn" onclick="openEditTask(${TASKS.indexOf(t)})" title="修改任务">✏️</button></td>
+        <td class="cal-td-name sc1"><span class="task-name">${t.name}</span><button class="edit-task-btn" onclick="openEditTask(${TASKS.indexOf(t)},this)" title="修改任务">✏️</button></td>
         <td class="cal-td-freq sc2"><span class="freq-tag ${fc}">${t.freq}</span></td>
         <td class="cal-td-link sc3">${linkHtml}</td>
         ${dayCells}</tr>`;
@@ -813,16 +812,33 @@ function closeDetailModal(){
 }
 
 // ── ADD TASK ──
-function openEditTask(idx){
+function openEditTask(idx,btn){
   const t=TASKS[idx];
   document.getElementById('etIdx').value=idx;
   document.getElementById('etName').value=t.name;
   document.getElementById('etLinkUrl').value=t.linkUrl||'';
   document.getElementById('etLinkText').value=t.linkText||'';
-  document.getElementById('editTaskModal').style.display='flex';
-  setTimeout(()=>document.getElementById('etName').focus(),50);
+  const pop=document.getElementById('editTaskModal');
+  pop.style.display='block';
+  const r=btn.getBoundingClientRect();
+  const pw=300,ph=240;
+  let left=r.right+8;
+  let top=r.top-8;
+  if(left+pw>window.innerWidth-8) left=r.left-pw-8;
+  if(top+ph>window.innerHeight-8) top=window.innerHeight-ph-8;
+  if(top<8) top=8;
+  pop.style.left=left+'px';
+  pop.style.top=top+'px';
+  setTimeout(()=>{
+    document.getElementById('etName').focus();
+    document.addEventListener('mousedown',_etOutside);
+  },50);
 }
-function closeEditTaskModal(){document.getElementById('editTaskModal').style.display='none';}
+function _etOutside(e){if(!document.getElementById('editTaskModal').contains(e.target))closeEditTaskModal();}
+function closeEditTaskModal(){
+  document.getElementById('editTaskModal').style.display='none';
+  document.removeEventListener('mousedown',_etOutside);
+}
 function submitEditTask(){
   const idx=parseInt(document.getElementById('etIdx').value);
   const name=document.getElementById('etName').value.trim();
