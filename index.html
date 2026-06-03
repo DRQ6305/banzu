@@ -527,7 +527,7 @@ function applyData(json){
   TODAY=(_now.getFullYear()===YEAR&&(_now.getMonth()+1)===MONTH)?_now.getDate():(json.today||MONTH_DAYS);
   document.getElementById('dateChip').textContent=`📅 ${YEAR}年 ${MONTH}月`;
   // 默认显示今天
-  SHIFT_TODAY=TODAY;filterRange={from:SHIFT_TODAY,to:SHIFT_TODAY};
+  (()=>{const now=new Date();const mins=now.getHours()*60+now.getMinutes();SHIFT_TODAY=(mins<7*60+50)?TODAY:Math.max(1,TODAY-1);filterRange={from:SHIFT_TODAY,to:SHIFT_TODAY};})();
   // 同步更新日期筛选输入框最大值
   document.getElementById('gfFrom').max=MONTH_DAYS;
   document.getElementById('gfTo').max=MONTH_DAYS;
