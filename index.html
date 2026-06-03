@@ -394,7 +394,6 @@ body{font-family:'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;backgroun
 
     <div class="panel" id="panel-stats">
       <div class="stats-grid">
-        <div class="chart-card"><div class="chart-card-title">各类别完成情况</div><div id="chartCat" style="height:260px"></div></div>
         <div class="chart-card"><div class="chart-card-title">完成状态占比</div><div id="chartPie" style="height:260px"></div></div>
       </div>
       <div class="stats-grid">
@@ -818,22 +817,11 @@ function initChart(id){
 
 function renderStats(){
   setTimeout(()=>{
-    try{renderChartCat();}catch(e){}try{renderChartPie();}catch(e){}
+    try{renderChartPie();}catch(e){}
     try{renderChartTrend();}catch(e){}try{renderChartBar();}catch(e){}
   },80);
 }
 const EC={backgroundColor:'transparent',textStyle:{color:'#475569',fontFamily:'PingFang SC,Microsoft YaHei,sans-serif'}};
-function renderChartCat(){
-  const chart=initChart('chartCat');
-  const r=getStatsRange();
-  const data=CATS.map(c=>{
-    const tasks=TASKS.filter(t=>t.cat===c.key);
-    let done=0,na=0;
-    tasks.forEach(t=>{for(let i=r.from-1;i<r.to;i++){const s=t.days[i]??0;if(s===1)done++;else if(s===3)na++;}});
-    return{name:c.key,pct:tasks.length>0?Math.round((done+na)/tasks.length*100):100,color:c.color};
-  });
-  chart.setOption({...EC,grid:{left:10,right:60,top:8,bottom:8,containLabel:true},xAxis:{type:'value',max:100,axisLabel:{formatter:'{value}%',color:'#94a3b8',fontSize:11},splitLine:{lineStyle:{color:'#f1f5f9'}},axisLine:{show:false}},yAxis:{type:'category',data:data.map(d=>d.name),axisLabel:{color:'#475569',fontSize:13,fontWeight:'600'},axisLine:{show:false},axisTick:{show:false}},series:[{type:'bar',barWidth:14,data:data.map(d=>({value:d.pct,itemStyle:{color:d.color,borderRadius:[0,4,4,0]}})),label:{show:true,position:'right',formatter:p=>p.value+'%',color:'#64748b',fontSize:11}}],tooltip:{formatter:p=>`${p.name}: ${p.value}%`}});
-}
 function renderChartPie(){
   const chart=initChart('chartPie');
   const r=getStatsRange();
@@ -845,11 +833,11 @@ function renderChartTrend(){
   const chart=initChart('chartTrend');
   const r=getStatsRange();
   const days=Array.from({length:r.to-r.from+1},(_,i)=>{
-    const di=r.from-1+i;let d=0,u=0,n=0;
-    TASKS.forEach(t=>{const s=t.days[di];if(s===1)d++;else if(s===2)u++;else if(s===3)n++;});
-    return{d,u,n,label:r.from+i+'日'};
+    const di=r.from-1+i;let d=0,u=0,n=0,t=0;
+    TASKS.forEach(t=>{const s=t.days[di];if(s===1)d++;else if(s===2)u++;else if(s===3)n++;});t=TASKS.length;
+    return{d,u,n,t,label:r.from+i+'日'};
   });
-  chart.setOption({...EC,grid:{left:10,right:10,top:24,bottom:8,containLabel:true},xAxis:{type:'category',data:days.map(d=>d.label),axisLabel:{color:'#94a3b8',fontSize:11},axisLine:{lineStyle:{color:'#e2e8f0'}},axisTick:{show:false}},yAxis:{type:'value',axisLabel:{color:'#94a3b8',fontSize:11},splitLine:{lineStyle:{color:'#f1f5f9'}},axisLine:{show:false}},tooltip:{trigger:'axis'},legend:{top:0,textStyle:{color:'#475569'},itemWidth:10,itemHeight:4},series:[{name:'已完成',type:'bar',stack:'s',data:days.map(d=>d.d),itemStyle:{color:'#86efac',borderRadius:[2,2,0,0]},label:{show:true,position:'inside',formatter:p=>p.value>0?p.value:'',fontSize:10,color:'#fff'}},{name:'未完成',type:'bar',stack:'s',data:days.map(d=>d.u),itemStyle:{color:'#fca5a5',borderRadius:[2,2,0,0]},label:{show:true,position:'inside',formatter:p=>p.value>0?p.value:'',fontSize:10,color:'#fff'}},{name:'不涉及',type:'bar',stack:'s',data:days.map(d=>d.n),itemStyle:{color:'#cbd5e1',borderRadius:[2,2,0,0]},label:{show:true,position:'inside',formatter:p=>p.value>0?p.value:'',fontSize:10,color:'#64748b'}}]});
+  chart.setOption({...EC,grid:{left:10,right:10,top:24,bottom:8,containLabel:true},xAxis:{type:'category',data:days.map(d=>d.label),axisLabel:{color:'#94a3b8',fontSize:11},axisLine:{lineStyle:{color:'#e2e8f0'}},axisTick:{show:false}},yAxis:[{type:'value',axisLabel:{color:'#94a3b8',fontSize:11},splitLine:{lineStyle:{color:'#f1f5f9'}},axisLine:{show:false}},{type:'value',min:0,max:TASKS.length+2,axisLabel:{show:false},splitLine:{show:false},axisLine:{show:false},axisTick:{show:false}}],tooltip:{trigger:'axis'},legend:{top:0,textStyle:{color:'#475569'},itemWidth:10,itemHeight:4},series:[{name:'已完成',type:'bar',stack:'s',data:days.map(d=>d.d),itemStyle:{color:'#86efac',borderRadius:[2,2,0,0]},label:{show:true,position:'inside',formatter:p=>p.value>0?p.value:'',fontSize:10,color:'#fff'}},{name:'未完成',type:'bar',stack:'s',data:days.map(d=>d.u),itemStyle:{color:'#fca5a5',borderRadius:[2,2,0,0]},label:{show:true,position:'inside',formatter:p=>p.value>0?p.value:'',fontSize:10,color:'#fff'}},{name:'不涉及',type:'bar',stack:'s',data:days.map(d=>d.n),itemStyle:{color:'#cbd5e1',borderRadius:[2,2,0,0]},label:{show:true,position:'inside',formatter:p=>p.value>0?p.value:'',fontSize:10,color:'#64748b'}},{name:'任务总数',type:'line',yAxisIndex:1,data:days.map(d=>d.t),smooth:true,symbol:'circle',symbolSize:5,lineStyle:{color:'#f59e0b',width:2},itemStyle:{color:'#f59e0b'},label:{show:true,position:'top',formatter:p=>p.value,fontSize:10,color:'#92400e'}}]});
 }
 function renderChartBar(){
   const chart=initChart('chartBar');
