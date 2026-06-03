@@ -356,6 +356,9 @@ body{font-family:'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;backgroun
     <button class="df-apply" onclick="applyGlobalRange()">应用</button>
   </div>
   <span id="gfRangeLabel" style="margin-left:8px;font-size:12px;color:var(--text3);"></span>
+  <div class="df-divider"></div>
+  <span class="df-label">分类：</span>
+  <div id="catFilterBar" style="display:flex;gap:4px;flex-wrap:wrap;"></div>
 </div>
 
 <!-- KPI BAR -->
@@ -370,7 +373,7 @@ body{font-family:'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;backgroun
 
 <!-- LAYOUT -->
 <div class="layout">
-  <div class="sidebar">
+  <div class="sidebar" style="display:none">
     <div class="sidebar-section">任务分类</div>
     <div id="sidebarList"></div>
   </div>
@@ -644,16 +647,16 @@ function applyGlobalRange(){
 
 // ── SIDEBAR ──
 function renderSidebar(){
-  let html=`<div class="sidebar-item active" onclick="filterCatSidebar('',this)"><div class="sidebar-dot" style="background:#2563eb"></div>全部任务<span class="sidebar-count">${TASKS.length}</span></div>`;
-  CATS.forEach(c=>{
-    const cnt=TASKS.filter(t=>t.cat===c.key).length;
-    html+=`<div class="sidebar-item" onclick="filterCatSidebar('${c.key}',this)"><div class="sidebar-dot" style="background:${c.color}"></div>【${c.key}】类<span class="sidebar-count">${cnt}</span></div>`;
+  let html=`<button class="gf-btn${activeSidebarCat===''?' active':''}" onclick="filterCatSidebar('',this)">全部</button>`;
+  CATS.forEach(cat=>{
+    html+=`<button class="gf-btn${activeSidebarCat===cat.key?' active':''}" style="border-left:3px solid ${cat.color}" onclick="filterCatSidebar('${cat.key}',this)">${cat.key}</button>`;
   });
-  document.getElementById('sidebarList').innerHTML=html;
+  const el=document.getElementById('catFilterBar');
+  if(el) el.innerHTML=html;
 }
 function filterCatSidebar(cat,el){
   activeSidebarCat=cat;
-  document.querySelectorAll('.sidebar-item').forEach(i=>i.classList.remove('active'));
+  document.querySelectorAll('#catFilterBar .gf-btn').forEach(i=>i.classList.remove('active'));
   el.classList.add('active');
   renderCalendar();
 }
