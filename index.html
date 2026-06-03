@@ -469,7 +469,7 @@ const _TK=_TA+_TB;
 const CATS=[{key:'人',color:'#2563eb'},{key:'机',color:'#ea580c'},{key:'料',color:'#7c3aed'},{key:'法',color:'#16a34a'},{key:'安全',color:'#dc2626'},{key:'其他',color:'#64748b'}];
 const FREQ_CLASS={天:'ft',周:'fw',月:'fm',按需:'fn'};
 
-let TASKS=[],TODAY=1,MONTH_DAYS=30,YEAR=2026,MONTH=6;
+let TASKS=[],TODAY=1,SHIFT_TODAY=1,MONTH_DAYS=30,YEAR=2026,MONTH=6;
 let ALL_MONTHS={},CURRENT_MONTH=6;
 let filterRange=null,activeSidebarCat='',activeGroup='侧围外板',isDirty=false,ghFileSha='';
 
@@ -527,7 +527,7 @@ function applyData(json){
   TODAY=(_now.getFullYear()===YEAR&&(_now.getMonth()+1)===MONTH)?_now.getDate():(json.today||MONTH_DAYS);
   document.getElementById('dateChip').textContent=`📅 ${YEAR}年 ${MONTH}月`;
   // 默认显示今天
-  filterRange=(()=>{const now=new Date();const mins=now.getHours()*60+now.getMinutes();if(mins<7*60+50){const y=new Date(now);y.setDate(y.getDate()-1);if(y.getFullYear()===YEAR&&(y.getMonth()+1)===MONTH){const d=y.getDate();return{from:d,to:d};}}return{from:TODAY,to:TODAY};})();
+  (()=>{const now=new Date();const mins=now.getHours()*60+now.getMinutes();if(mins<7*60+50){const y=new Date(now);y.setDate(y.getDate()-1);if(y.getFullYear()===YEAR&&(y.getMonth()+1)===MONTH){SHIFT_TODAY=y.getDate();filterRange={from:SHIFT_TODAY,to:SHIFT_TODAY};return;}}SHIFT_TODAY=TODAY;filterRange={from:SHIFT_TODAY,to:SHIFT_TODAY};})();
   // 同步更新日期筛选输入框最大值
   document.getElementById('gfFrom').max=MONTH_DAYS;
   document.getElementById('gfTo').max=MONTH_DAYS;
@@ -658,25 +658,16 @@ function updateGfLabel(){
   el.textContent=r?(r.from===r.to?`${r.from}日`:`${r.from}日 — ${r.to}日`):'全月';
 }
 // 白班7:50~19:50显示当天，夜班19:50~次日7:50显示开班日
-function getShiftDay(){
-  const now=new Date();
-  const mins=now.getHours()*60+now.getMinutes();
-  if(mins<7*60+50){
-    // 0:00~7:49 属于夜班，开班日是昨天
-    const yest=new Date(now); yest.setDate(yest.getDate()-1);
-    if(yest.getFullYear()===YEAR&&(yest.getMonth()+1)===MONTH) return yest.getDate();
-  }
-  return TODAY;
-}
+function getShiftDay(){return SHIFT_TODAY;}
 function setGlobalFilter(mode,btn){
   document.querySelectorAll('.gf-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   document.getElementById('gfFrom').value='';
   document.getElementById('gfTo').value='';
   if(mode==='all') filterRange=null;
-  else if(mode==='today'){const sd=getShiftDay();filterRange={from:sd,to:sd};}
+  else if(mode==='today'){filterRange={from:SHIFT_TODAY,to:SHIFT_TODAY};}
   else if(mode==='week') filterRange={from:1,to:7};
-  else if(mode==='yesterday'){const yd=Math.max(1,getShiftDay()-1);filterRange={from:yd,to:yd};}
+  else if(mode==='yesterday'){const yd=Math.max(1,SHIFT_TODAY-1);filterRange={from:yd,to:yd};}
   updateGfLabel();
   renderCalendar(); updateKPI();
   if(document.querySelector('.panel.active')?.id==='panel-stats') renderStats();
