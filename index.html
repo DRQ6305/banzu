@@ -350,27 +350,6 @@ body{font-family:'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;backgroun
   <div class="kpi-item kpi-link" onclick="gotoPanel('stats')" title="查看统计分析"><div class="kpi-icon p">📋</div><div><div class="kpi-num p" id="kTotal">—</div><div class="kpi-label">任务总数</div></div></div>
 </div>
 
-<!-- GLOBAL DATE FILTER -->
-<div class="global-filter-bar">
-  <span class="df-label">📅 日期范围：</span>
-  <button class="gf-btn" onclick="setGlobalFilter('all',this)">全月</button>
-  <button class="gf-btn active" onclick="setGlobalFilter('today',this)">今天</button>
-  <button class="gf-btn" onclick="setGlobalFilter('week',this)">本周</button>
-  <button class="gf-btn" onclick="setGlobalFilter('yesterday',this)">昨天</button>
-  <div class="df-divider"></div>
-  <div class="df-range">
-    <span class="df-label">自定义：</span>
-    <input class="df-day-input" id="gfFrom" type="number" min="1" max="30" placeholder="起">
-    <span class="df-range-sep">—</span>
-    <input class="df-day-input" id="gfTo" type="number" min="1" max="30" placeholder="止">
-    <button class="df-apply" onclick="applyGlobalRange()">应用</button>
-  </div>
-  <span id="gfRangeLabel" style="margin-left:8px;font-size:12px;color:var(--text3);"></span>
-  <div class="df-divider"></div>
-  <span class="df-label">分类：</span>
-  <div id="catFilterBar" style="display:flex;gap:4px;flex-wrap:wrap;"></div>
-</div>
-
 <!-- LAYOUT -->
 <div class="layout">
   <div class="sidebar" style="display:none">
@@ -381,7 +360,23 @@ body{font-family:'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;backgroun
 
     <div class="panel active" id="panel-calendar">
       <div class="date-filter-bar" style="border-bottom:1px solid var(--border);padding:8px 16px;">
-        <span class="edit-hint">💡 点击格子切换状态</span>
+                <span class="df-label">📅 日期范围：</span>
+        <button class="gf-btn" onclick="setGlobalFilter('all',this)">全月</button>
+        <button class="gf-btn active" onclick="setGlobalFilter('today',this)">今天</button>
+        <button class="gf-btn" onclick="setGlobalFilter('week',this)">本周</button>
+        <button class="gf-btn" onclick="setGlobalFilter('yesterday',this)">昨天</button>
+        <div class="df-divider"></div>
+        <div class="df-range">
+        <span class="df-label">自定义：</span>
+        <input class="df-day-input" id="gfFrom" type="number" min="1" max="30" placeholder="起">
+        <span class="df-range-sep">—</span>
+        <input class="df-day-input" id="gfTo" type="number" min="1" max="30" placeholder="止">
+        <button class="df-apply" onclick="applyGlobalRange()">应用</button>
+        </div>
+        <span id="gfRangeLabel" style="margin-left:8px;font-size:12px;color:var(--text3);"></span>
+        <div class="df-divider"></div>
+        <span class="df-label">分类：</span>
+        <div id="catFilterBar" style="display:flex;gap:4px;flex-wrap:wrap;"></div>
         <div class="legend-row">
           <div class="legend-item"><div class="legend-dot" style="background:var(--green-cell);border:1px solid #86efac"></div>已完成</div>
           <div class="legend-item"><div class="legend-dot" style="background:var(--red-cell);border:1px solid #fca5a5"></div>未完成</div>
