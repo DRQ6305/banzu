@@ -489,8 +489,9 @@ async function loadData(){
 }
 
 function applyData(json){
-  TASKS=json.tasks; TODAY=json.today;
-  MONTH_DAYS=json.month_days||30; MONTH=json.month;
+  TASKS=json.tasks; MONTH_DAYS=json.month_days||30; MONTH=json.month;
+  const _now=new Date();
+  TODAY=(_now.getFullYear()===YEAR&&(_now.getMonth()+1)===MONTH)?_now.getDate():(json.today||MONTH_DAYS);
   document.getElementById('dateChip').textContent=`📅 ${YEAR}年 ${MONTH}月`;
   // 默认显示今天
   filterRange={from:TODAY,to:TODAY};
