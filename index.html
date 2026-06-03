@@ -340,6 +340,16 @@ body{font-family:'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;backgroun
   </div>
 </div>
 
+<!-- KPI BAR -->
+<div class="kpi-bar">
+  <div class="kpi-item kpi-link" onclick="gotoPanel('stats')" title="查看统计分析"><div class="kpi-icon g">✅</div><div><div class="kpi-num g" id="kDone">—</div><div class="kpi-label">已完成次数</div></div></div>
+  <div class="kpi-item kpi-link" onclick="gotoPanel('stats')" title="查看统计分析"><div class="kpi-icon r">❌</div><div><div class="kpi-num r" id="kUndone">—</div><div class="kpi-label">未完成次数</div></div></div>
+  <div class="kpi-item kpi-link" onclick="gotoPanel('stats')" title="查看统计分析"><div class="kpi-icon o">➖</div><div><div class="kpi-num o" id="kNA">—</div><div class="kpi-label">不涉及次数</div></div></div>
+  <div class="kpi-item kpi-link" onclick="gotoPanel('stats')" title="查看统计分析"><div class="kpi-icon" style="background:rgba(148,163,184,.15)">❓</div><div><div class="kpi-num" style="color:#94a3b8" id="kUnfilled">—</div><div class="kpi-label">未填写数量</div></div></div>
+  <div class="kpi-item kpi-link" onclick="gotoPanel('stats')" title="查看统计分析"><div class="kpi-icon b">📊</div><div><div class="kpi-num b" id="kRate">—</div><div class="kpi-label">任务完成率</div></div></div>
+  <div class="kpi-item kpi-link" onclick="gotoPanel('stats')" title="查看统计分析"><div class="kpi-icon p">📋</div><div><div class="kpi-num p" id="kTotal">—</div><div class="kpi-label">任务总数</div></div></div>
+</div>
+
 <!-- GLOBAL DATE FILTER -->
 <div class="global-filter-bar">
   <span class="df-label">📅 日期范围：</span>
@@ -359,16 +369,6 @@ body{font-family:'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;backgroun
   <div class="df-divider"></div>
   <span class="df-label">分类：</span>
   <div id="catFilterBar" style="display:flex;gap:4px;flex-wrap:wrap;"></div>
-</div>
-
-<!-- KPI BAR -->
-<div class="kpi-bar">
-  <div class="kpi-item kpi-link" onclick="gotoPanel('stats')" title="查看统计分析"><div class="kpi-icon g">✅</div><div><div class="kpi-num g" id="kDone">—</div><div class="kpi-label">已完成次数</div></div></div>
-  <div class="kpi-item kpi-link" onclick="gotoPanel('stats')" title="查看统计分析"><div class="kpi-icon r">❌</div><div><div class="kpi-num r" id="kUndone">—</div><div class="kpi-label">未完成次数</div></div></div>
-  <div class="kpi-item kpi-link" onclick="gotoPanel('stats')" title="查看统计分析"><div class="kpi-icon o">➖</div><div><div class="kpi-num o" id="kNA">—</div><div class="kpi-label">不涉及次数</div></div></div>
-  <div class="kpi-item kpi-link" onclick="gotoPanel('stats')" title="查看统计分析"><div class="kpi-icon" style="background:rgba(148,163,184,.15)">❓</div><div><div class="kpi-num" style="color:#94a3b8" id="kUnfilled">—</div><div class="kpi-label">未填写数量</div></div></div>
-  <div class="kpi-item kpi-link" onclick="gotoPanel('stats')" title="查看统计分析"><div class="kpi-icon b">📊</div><div><div class="kpi-num b" id="kRate">—</div><div class="kpi-label">任务完成率</div></div></div>
-  <div class="kpi-item kpi-link" onclick="gotoPanel('stats')" title="查看统计分析"><div class="kpi-icon p">📋</div><div><div class="kpi-num p" id="kTotal">—</div><div class="kpi-label">任务总数</div></div></div>
 </div>
 
 <!-- LAYOUT -->
