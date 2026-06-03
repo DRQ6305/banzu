@@ -676,7 +676,7 @@ function setGlobalFilter(mode,btn){
   if(mode==='all') filterRange=null;
   else if(mode==='today'){const sd=getShiftDay();filterRange={from:sd,to:sd};}
   else if(mode==='week') filterRange={from:1,to:7};
-  else if(mode==='yesterday') filterRange={from:Math.max(1,TODAY-1),to:Math.max(1,TODAY-1)};
+  else if(mode==='yesterday'){const yd=Math.max(1,getShiftDay()-1);filterRange={from:yd,to:yd};}
   updateGfLabel();
   renderCalendar(); updateKPI();
   if(document.querySelector('.panel.active')?.id==='panel-stats') renderStats();
