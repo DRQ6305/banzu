@@ -722,15 +722,11 @@ function renderCalendar(){
     </tr></thead>
     <tbody>${tbody}</tbody>
   </table></div>`;
-  // 自动滚动到今天
+    // 自动滚动到今天
   setTimeout(()=>{
-    const main=document.getElementById('mainScroll');
-    if(!main||TODAY<=1)return;
-    const leftW=220+70+160;
-    const dayW=42;
-    const target=leftW+(TODAY-1)*dayW-main.clientWidth/2+dayW/2;
-    main.scrollLeft=Math.max(0,target);
-  },60);
+    const el=document.querySelector('.today-ring');
+    if(el)el.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});
+  },150);
 }
 
 
@@ -891,7 +887,7 @@ function switchPanel(name,btn){
   btn.classList.add('active');
   if(name==='stats') renderStats();
 }
-function scrollToToday(){const el=document.querySelector('.today-ring');if(el)el.scrollIntoView({behavior:'smooth',block:'center'});}
+function scrollToToday(){const el=document.querySelector('.today-ring');if(el)el.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});}
 
 // ── CLOCK ──
 function updateClock(){
