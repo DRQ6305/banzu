@@ -665,7 +665,7 @@ function filterGroup(key,btn){
   activeGroup=key;
   document.querySelectorAll('#groupList .sidebar-item').forEach(i=>i.classList.remove('active'));
   btn.classList.add('active');
-  renderCalendar(); updateKPI();
+  renderCalendar(); updateKPI(); renderStats();
 }
 
 // ── CALENDAR ──
