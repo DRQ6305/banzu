@@ -728,7 +728,7 @@ function renderCalendar(){
   let dayHeaders='';
   for(let d=1;d<=MONTH_DAYS;d++){
     const inRange=filterRange===null||(d>=filterRange.from&&d<=filterRange.to);
-    dayHeaders+=`<th class="cal-th-day${d===TODAY?' cal-today-hdr':''}${inRange?'':' dimmed'}">${d}</th>`;
+    dayHeaders+=`<th class="cal-th-day${d===getShiftDay()?' cal-today-hdr':''}${inRange?'':' dimmed'}">${d}</th>`;
   }
   let tbody='';
   let hasAny=false;
