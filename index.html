@@ -267,6 +267,14 @@ body{font-family:'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;backgroun
     <div class="modal-desc" style="margin-bottom:16px">填写任务信息，新任务将添加到当前月</div>
     <label style="font-size:12px;font-weight:600;color:var(--text2);display:block;margin-bottom:4px">任务名称 <span style="color:var(--red)">*</span></label>
     <input class="modal-input" id="atName" type="text" placeholder="请输入任务名称" maxlength="40">
+    <div style="margin-bottom:12px">
+      <label style="font-size:12px;font-weight:600;color:var(--text2);display:block;margin-bottom:4px">班组 <span style="color:var(--red)">*</span></label>
+      <select class="modal-input" id="atGroup" style="margin-bottom:0">
+        <option value="侧围外板">侧围外板</option>
+        <option value="侧围内板">侧围内板</option>
+        <option value="主线">主线</option>
+      </select>
+    </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
       <div>
         <label style="font-size:12px;font-weight:600;color:var(--text2);display:block;margin-bottom:4px">分类 <span style="color:var(--red)">*</span></label>
@@ -787,6 +795,7 @@ function closeDetailModal(){
 
 // ── ADD TASK ──
 function openAddTaskModal(){
+  document.getElementById('atGroup').value=activeGroup||'侧围外板';
   document.getElementById('atName').value='';
   document.getElementById('atCat').value='人';
   document.getElementById('atFreq').value='天';
@@ -803,12 +812,13 @@ function closeAddTaskModal(){
 function submitAddTask(){
   const name=document.getElementById('atName').value.trim();
   if(!name){showToast('请输入任务名称','error');return;}
+  const group=document.getElementById('atGroup').value;
   const cat=document.getElementById('atCat').value;
   const freq=document.getElementById('atFreq').value;
   const linkUrl=document.getElementById('atLinkUrl').value.trim();
   const linkText=document.getElementById('atLinkText').value.trim();
   const days=Array(MONTH_DAYS).fill(0);
-  TASKS.push({group:activeGroup||'侧围外板',name,cat,freq,days,linkUrl,linkText});
+  TASKS.push({group,name,cat,freq,days,linkUrl,linkText});
   setDirty(true);
   renderSidebar();
   renderCalendar();
