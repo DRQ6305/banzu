@@ -670,7 +670,7 @@ function filterGroup(key,btn){
 // ── CALENDAR ──
 function renderCalendar(){
   const view=document.getElementById('calendarView');
-  const filtered=TASKS.filter(t=>(activeSidebarCat===''||t.cat===activeSidebarCat)&&(activeGroup===''||t.group===activeGroup));
+  const filtered=TASKS.filter(t=>(activeSidebarCat===''||t.cat===activeSidebarCat)&&(activeGroup===''||(t.group||'侧围外板')===activeGroup));
   const catGroups=activeSidebarCat?[activeSidebarCat]:CATS.map(c=>c.key);
   const r=getEffectiveRange();
   let dayHeaders='';
