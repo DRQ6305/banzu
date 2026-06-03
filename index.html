@@ -154,6 +154,9 @@ body{font-family:'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;backgroun
 .cal-td-link{padding:9px 10px;min-width:160px;width:160px;background:#fff;border-right:1px solid var(--border2);}
 .cal-dc-cell{padding:3px 2px;text-align:center;vertical-align:middle;}
 .task-name{font-size:13px;font-weight:600;color:var(--text);line-height:1.4;}
+.edit-task-btn{display:none;margin-left:6px;background:none;border:none;cursor:pointer;font-size:13px;opacity:.6;vertical-align:middle;padding:0 2px;}
+.cal-task-row:hover .edit-task-btn{display:inline;}
+.edit-task-btn:hover{opacity:1;}
 .freq-tag{display:inline-flex;padding:3px 9px;border-radius:6px;font-size:11px;font-weight:700;letter-spacing:.2px;}
 .ft{background:#dbeafe;color:#1d4ed8;}.fw{background:#ede9fe;color:#6d28d9;}
 .fm{background:#dcfce7;color:#15803d;}.fn{background:#fef3c7;color:#b45309;}
@@ -261,6 +264,22 @@ body{font-family:'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;backgroun
 </div>
 
 <!-- ADD TASK MODAL -->
+<div id="editTaskModal" style="display:none" onclick="if(event.target===this)closeEditTaskModal()">
+  <div class="modal-box" style="width:460px">
+    <div class="modal-title">修改任务</div>
+    <label style="font-size:12px;font-weight:600;color:var(--text2);display:block;margin-bottom:4px">任务名称 <span style="color:var(--red)">*</span></label>
+    <input class="modal-input" id="etName" type="text" maxlength="40">
+    <label style="font-size:12px;font-weight:600;color:var(--text2);display:block;margin-bottom:4px">链接地址（可选）</label>
+    <input class="modal-input" id="etLinkUrl" type="url" placeholder="https://...">
+    <label style="font-size:12px;font-weight:600;color:var(--text2);display:block;margin-bottom:4px">链接文字（可选）</label>
+    <input class="modal-input" id="etLinkText" type="text" maxlength="20">
+    <input type="hidden" id="etIdx">
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <button class="modal-btn" style="background:var(--bg3);color:var(--text2);border:1px solid var(--border2)" onclick="closeEditTaskModal()">取消</button>
+      <button class="modal-btn" onclick="submitEditTask()">确认修改</button>
+    </div>
+  </div>
+</div>
 <div class="modal-mask" id="addTaskModal" style="display:none" onclick="if(event.target===this)closeAddTaskModal()">
   <div class="modal-box" style="width:460px">
     <div class="modal-title">新增任务</div>
@@ -719,7 +738,7 @@ function renderCalendar(){
         dayCells+=`<td class="cal-dc-cell"><div class="dc s${s}${day===TODAY?' today-ring':''}${inRange?'':' dimmed'}" data-ti="${ti}" data-di="${i}" title="${day}日·${statusLabel(s)}" onclick="toggleDay(${ti},${i})">${day}</div></td>`;
       }
       tbody+=`<tr class="cal-task-row" data-cat="${catKey}">
-        <td class="cal-td-name sc1"><span class="task-name">${t.name}</span></td>
+        <td class="cal-td-name sc1"><span class="task-name">${t.name}</span><button class="edit-task-btn" onclick="openEditTask(${TASKS.indexOf(t)})" title="修改任务">✏️</button></td>
         <td class="cal-td-freq sc2"><span class="freq-tag ${fc}">${t.freq}</span></td>
         <td class="cal-td-link sc3">${linkHtml}</td>
         ${dayCells}</tr>`;
@@ -794,6 +813,28 @@ function closeDetailModal(){
 }
 
 // ── ADD TASK ──
+function openEditTask(idx){
+  const t=TASKS[idx];
+  document.getElementById('etIdx').value=idx;
+  document.getElementById('etName').value=t.name;
+  document.getElementById('etLinkUrl').value=t.linkUrl||'';
+  document.getElementById('etLinkText').value=t.linkText||'';
+  document.getElementById('editTaskModal').style.display='flex';
+  setTimeout(()=>document.getElementById('etName').focus(),50);
+}
+function closeEditTaskModal(){document.getElementById('editTaskModal').style.display='none';}
+function submitEditTask(){
+  const idx=parseInt(document.getElementById('etIdx').value);
+  const name=document.getElementById('etName').value.trim();
+  if(!name){showToast('请输入任务名称','error');return;}
+  TASKS[idx].name=name;
+  TASKS[idx].linkUrl=document.getElementById('etLinkUrl').value.trim();
+  TASKS[idx].linkText=document.getElementById('etLinkText').value.trim();
+  setDirty(true);
+  closeEditTaskModal();
+  renderCalendar();
+  showToast('任务已修改');
+}
 function openAddTaskModal(){
   document.getElementById('atGroup').value=activeGroup||'侧围外板';
   document.getElementById('atName').value='';
