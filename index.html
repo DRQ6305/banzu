@@ -621,7 +621,7 @@ function toggleDay(ti,di){
         dc.title=`${dg.start}-${dg.end}日·${statusLabel(newVal)}`;
       }
     }
-  }else if(t.freq==='周'){
+  }else if(t.freq.includes('周')){
     const wgs=getWeekGroups(YEAR,MONTH,MONTH_DAYS);
     const wg=wgs.find(g=>di>=g.start-1&&di<=g.end-1);
     if(wg){
@@ -821,7 +821,7 @@ function renderCalendar(){
           const inRange=filterRange===null||(dg.start<=filterRange.to&&dg.end>=filterRange.from);
           dayCells+=`<td class="cal-dc-cell" colspan="${colspan}"><div class="dc s${s} merged${ring?' today-ring':''}${inRange?'':' dimmed'}" data-ti="${ti}" data-di="${repDi}" title="${dg.start}-${dg.end}日·${statusLabel(s)}" onclick="toggleDay(${ti},${repDi})">${dg.start}-${dg.end}</div></td>`;
         });
-      }else if(t.freq==='周'){
+      }else if(t.freq.includes('周')){
         const wgs=getWeekGroups(YEAR,MONTH,MONTH_DAYS);
         wgs.forEach((wg,wi)=>{
           const colspan=wg.end-wg.start+1;
