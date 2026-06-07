@@ -594,16 +594,33 @@ function getWeekGroups(year,month,monthDays){
   while(d<=monthDays){const end=Math.min(monthDays,d+6);groups.push({start:d,end});d=end+1;}
   return groups;
 }
+// ── DECADE GROUPS (10天/次 → 3 groups: 1-10, 11-20, 21-end) ──
+function getDecadeGroups(monthDays){
+  return [{start:1,end:10},{start:11,end:20},{start:21,end:monthDays}];
+}
 
 // ── TOGGLE ──
 function toggleDay(ti,di){
   const t=TASKS[ti];
   const newVal=((t.days[di]??0)+1)%4;
   setDirty(true);
-  if(t.freq==='月'){
+  if(t.freq.includes('月')){
     for(let i=0;i<MONTH_DAYS;i++) t.days[i]=newVal;
     const dc=document.querySelector(`.dc[data-ti="${ti}"][data-di="0"]`);
     if(dc){dc.className='dc s'+newVal+' merged'+(SHIFT_TODAY>=1?' today-ring':'');dc.title='本月·'+statusLabel(newVal);}
+  }else if(t.freq==='10天/次'){
+    const dgs=getDecadeGroups(MONTH_DAYS);
+    const dg=dgs.find(g=>di>=g.start-1&&di<=g.end-1);
+    if(dg){
+      for(let i=dg.start-1;i<=dg.end-1;i++) t.days[i]=newVal;
+      const dc=document.querySelector(`.dc[data-ti="${ti}"][data-di="${dg.start-1}"]`);
+      if(dc){
+        const ring=SHIFT_TODAY>=dg.start&&SHIFT_TODAY<=dg.end;
+        const inRange=filterRange===null||(dg.start<=filterRange.to&&dg.end>=filterRange.from);
+        dc.className='dc s'+newVal+' merged'+(ring?' today-ring':'')+(inRange?'':' dimmed');
+        dc.title=`${dg.start}-${dg.end}日·${statusLabel(newVal)}`;
+      }
+    }
   }else if(t.freq==='周'){
     const wgs=getWeekGroups(YEAR,MONTH,MONTH_DAYS);
     const wg=wgs.find(g=>di>=g.start-1&&di<=g.end-1);
@@ -790,10 +807,20 @@ function renderCalendar(){
       const fc=getFreqClass(t.freq);
       const linkHtml=t.linkUrl?`<a class="link-pill" href="${t.linkUrl}" target="_blank">🔗 ${t.linkText||'查看'}</a>`:`<span style="color:var(--text3);font-size:12px">—</span>`;
       let dayCells='';
-      if(t.freq==='月'){
+      if(t.freq.includes('月')){
         const s=t.days[0]??0;
         const inRange=filterRange===null||(1<=filterRange.to&&MONTH_DAYS>=filterRange.from);
         dayCells+=`<td class="cal-dc-cell" colspan="${MONTH_DAYS}"><div class="dc s${s} merged${SHIFT_TODAY>=1?' today-ring':''}${inRange?'':' dimmed'}" data-ti="${ti}" data-di="0" title="本月·${statusLabel(s)}" onclick="toggleDay(${ti},0)">本月</div></td>`;
+      }else if(t.freq==='10天/次'){
+        const dgs=getDecadeGroups(MONTH_DAYS);
+        dgs.forEach((dg,gi)=>{
+          const colspan=dg.end-dg.start+1;
+          const repDi=dg.start-1;
+          const s=t.days[repDi]??0;
+          const ring=SHIFT_TODAY>=dg.start&&SHIFT_TODAY<=dg.end;
+          const inRange=filterRange===null||(dg.start<=filterRange.to&&dg.end>=filterRange.from);
+          dayCells+=`<td class="cal-dc-cell" colspan="${colspan}"><div class="dc s${s} merged${ring?' today-ring':''}${inRange?'':' dimmed'}" data-ti="${ti}" data-di="${repDi}" title="${dg.start}-${dg.end}日·${statusLabel(s)}" onclick="toggleDay(${ti},${repDi})">${dg.start}-${dg.end}</div></td>`;
+        });
       }else if(t.freq==='周'){
         const wgs=getWeekGroups(YEAR,MONTH,MONTH_DAYS);
         wgs.forEach((wg,wi)=>{
