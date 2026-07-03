@@ -1,6 +1,6 @@
 {
   "year": 2026,
-  "current_month": 6,
+  "current_month": 7,
   "months": {
     "6": {
       "year": 2026,
@@ -1532,7 +1532,7 @@
     "7": {
       "year": 2026,
       "month": 7,
-      "today": 1,
+      "today": 4,
       "month_days": 31,
       "tasks": [
         {
@@ -2691,11 +2691,11 @@
           "linkText": "风险扫码",
           "linkUrl": "https://applink.feishu.cn/client/message/link/open?token=AmlaBmdWgku6ah2XV44BC9E%3D",
           "days": [
-            0,
-            0,
-            0,
-            0,
-            0,
+            1,
+            1,
+            1,
+            1,
+            1,
             0,
             0,
             0,
