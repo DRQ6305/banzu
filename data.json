@@ -3191,7 +3191,7 @@
           "linkText": "蓝领绩效",
           "linkUrl": "https://it-hr-performance-factory-web.lixiangoa.com/assess",
           "days": [
-            0,
+            1,
             0,
             0,
             0,
@@ -3314,7 +3314,7 @@
           "linkText": "重点夹具设备点检工位汇总",
           "linkUrl": "https://li.feishu.cn/wiki/PDmLwwikYibkwFkZrk2czartntf",
           "days": [
-            0,
+            1,
             0,
             0,
             0,
@@ -3355,7 +3355,7 @@
           "linkText": "每日点检",
           "linkUrl": "https://sam-ems-app.lixiang.com/equip-spotcheck-order",
           "days": [
-            0,
+            1,
             0,
             0,
             0,
@@ -3437,7 +3437,7 @@
           "linkText": "60JPH涂胶视觉检测结果",
           "linkUrl": "https://li.feishu.cn/base/KQgObWQ5zaIsdXsS2aTczUWinfb?from=from_copylink",
           "days": [
-            0,
+            1,
             0,
             0,
             0,
@@ -3560,7 +3560,7 @@
           "linkText": "60JPH-W02侧围涂胶测量记录表",
           "linkUrl": "https://li.feishu.cn/sheets/KiRwsHtIShC1XttQuq6cXbCcn9d",
           "days": [
-            0,
+            2,
             0,
             0,
             0,
@@ -3724,7 +3724,7 @@
           "linkText": "HOLD",
           "linkUrl": "https://hold.lixiang.com/newHome?lang=zh-CN&open_in_browser=true&v=24",
           "days": [
-            0,
+            1,
             0,
             0,
             0,
@@ -3888,7 +3888,7 @@
           "linkText": "不合格品管理台账",
           "linkUrl": "https://li.feishu.cn/file/PcrNbUTifoN14xxrPZmcDzFknTa",
           "days": [
-            0,
+            1,
             0,
             0,
             0,
@@ -3929,7 +3929,7 @@
           "linkText": "离线_返工记录表",
           "linkUrl": "https://li.feishu.cn/sheets/NlJ4sK785h0N5Htcf6xc6DeFntK",
           "days": [
-            0,
+            1,
             0,
             0,
             0,
@@ -3970,7 +3970,7 @@
           "linkText": "人员变化点",
           "linkUrl": "https://factory-4m-app-web.prod.k8s.lixiang.com/edit-change-point",
           "days": [
-            0,
+            1,
             0,
             0,
             0,
@@ -4339,7 +4339,7 @@
           "linkText": "侧围外板焊装交接班记录",
           "linkUrl": "https://li.feishu.cn/sheets/ZtTlsJxxdh5Eu4tE501csCSbnhd?sheet=sw4omM",
           "days": [
-            0,
+            1,
             0,
             0,
             0,
@@ -4544,7 +4544,7 @@
           "linkText": "人员技能更新",
           "linkUrl": "https://lixiang.feishuapp.cn/ae/apps/v3/package_883834__c/pc/aadjwj4rrxyqw",
           "days": [
-            0,
+            1,
             0,
             0,
             0,
