@@ -1,6 +1,6 @@
 {
   "year": 2026,
-  "current_month": 7,
+  "current_month": 8,
   "months": {
     "6": {
       "year": 2026,
@@ -3068,7 +3068,7 @@
           "linkText": "生产A室工时统计表",
           "linkUrl": "https://li.feishu.cn/sheets/KsoNsBofBh8owztbxCGcFCeWnvd?from=from_copylink",
           "days": [
-            0,
+            1,
             0,
             0,
             0,
@@ -3109,7 +3109,7 @@
           "linkText": "南区焊装二车间HPV日报-6月",
           "linkUrl": "https://li.feishu.cn/wiki/PEaOwZ1XGiGxwEkhbltcZ4s9nMf?from=from_copylink",
           "days": [
-            0,
+            1,
             0,
             0,
             0,
@@ -3150,7 +3150,7 @@
           "linkText": "三区加班审批登记表（焊装车间）",
           "linkUrl": "https://li.feishu.cn/sheets/LsOOsiXDHhABtMttHdncgzsMnXd?sheet=jLXYwr",
           "days": [
-            0,
+            1,
             0,
             0,
             0,
@@ -3232,7 +3232,7 @@
           "linkText": "加班提报",
           "linkUrl": "https://attendance.lixiang.com/dz/pre-overtime.html",
           "days": [
-            0,
+            1,
             0,
             0,
             0,
@@ -3396,7 +3396,7 @@
           "linkText": "车身每日胶水确认",
           "linkUrl": "https://li.feishu.cn/base/OlTlbO9lnansFvskW6zcxGoynbc",
           "days": [
-            0,
+            1,
             0,
             0,
             0,
@@ -3478,7 +3478,7 @@
           "linkText": "60JPH-W04侧围涂胶测量记录表",
           "linkUrl": "https://li.feishu.cn/sheets/TvPHs4ESshfcBGtnIHzcPowrnqb?from=from_copylink",
           "days": [
-            0,
+            1,
             0,
             0,
             0,
@@ -3519,8 +3519,8 @@
           "linkText": "60JPH-W04侧围涂胶测量记录表",
           "linkUrl": "https://li.feishu.cn/sheets/TvPHs4ESshfcBGtnIHzcPowrnqb?from=from_copylink",
           "days": [
-            0,
-            0,
+            1,
+            1,
             0,
             0,
             0,
@@ -3601,8 +3601,8 @@
           "linkText": "60JPH-W02侧围涂胶测量记录表",
           "linkUrl": "https://li.feishu.cn/sheets/KiRwsHtIShC1XttQuq6cXbCcn9d",
           "days": [
-            0,
-            0,
+            2,
+            2,
             0,
             0,
             0,
@@ -3683,7 +3683,7 @@
           "linkText": "胶水领用",
           "linkUrl": "https://factory-ams-app-web.prod.k8s.chehejia.com/home/tab1",
           "days": [
-            0,
+            1,
             0,
             0,
             0,
@@ -3765,8 +3765,8 @@
           "linkText": "焊装车间劳保领用及发放周度跟踪表",
           "linkUrl": "https://li.feishu.cn/wiki/OBlIwVP1vieHMdkIj49cZCmQnOh",
           "days": [
-            0,
-            0,
+            1,
+            1,
             0,
             0,
             0,
@@ -3806,8 +3806,8 @@
           "linkText": "南区焊装二车间线边胶水盘点表",
           "linkUrl": "https://li.feishu.cn/wiki/IwbFwoCXyiDetCklTmqcRDR8nAY?sheet=88uZ9x",
           "days": [
-            0,
-            0,
+            1,
+            1,
             0,
             0,
             0,
@@ -3847,7 +3847,7 @@
           "linkText": "南区焊装二车间排胶&残胶记录",
           "linkUrl": "https://li.feishu.cn/wiki/WdSuwg8fPiIuOdkddlCc3JkKnAe?sheet=6PCWxC",
           "days": [
-            0,
+            1,
             0,
             0,
             0,
@@ -4011,7 +4011,7 @@
           "linkText": "流程中心",
           "linkUrl": "https://bpm.lixiangoa.com/desktop.html#/process_center",
           "days": [
-            0,
+            1,
             0,
             0,
             0,
@@ -4052,7 +4052,7 @@
           "linkText": "",
           "linkUrl": "",
           "days": [
-            0,
+            1,
             0,
             0,
             0,
@@ -4175,8 +4175,8 @@
           "linkText": "焊装车间安全隐患汇总2026",
           "linkUrl": "https://li.feishu.cn/base/DslWbEBOZaYFUcsOFyYcGCTMnEb?from=from_copylink",
           "days": [
-            0,
-            0,
+            1,
+            1,
             0,
             0,
             0,
@@ -4216,8 +4216,8 @@
           "linkText": "风险扫码",
           "linkUrl": "https://applink.feishu.cn/client/message/link/open?token=AmlaBmdWgku6ah2XV44BC9E%3D",
           "days": [
-            0,
-            0,
+            1,
+            1,
             0,
             0,
             0,
@@ -4298,7 +4298,7 @@
           "linkText": "",
           "linkUrl": "",
           "days": [
-            0,
+            1,
             0,
             0,
             0,
@@ -4421,7 +4421,7 @@
           "linkText": "问题记录",
           "linkUrl": "https://lixiang.feishuapp.cn/ae/apps/v3/package_a975e2__c/pc/aadib4pdwlgkw",
           "days": [
-            0,
+            1,
             0,
             0,
             0,
@@ -4462,7 +4462,7 @@
           "linkText": "",
           "linkUrl": "",
           "days": [
-            0,
+            1,
             0,
             0,
             0,
@@ -4503,7 +4503,7 @@
           "linkText": "",
           "linkUrl": "",
           "days": [
-            0,
+            1,
             0,
             0,
             0,
